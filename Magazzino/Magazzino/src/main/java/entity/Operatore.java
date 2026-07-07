@@ -1,0 +1,31 @@
+package entity;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Entità che rappresenta un operatore, ovvero l'utente che crea i movimenti di magazzino.
+ */
+@Entity
+@DiscriminatorValue("OPERATORE")
+public class Operatore extends Utente {
+
+    @OneToMany(mappedBy = "operatore")
+    private List<Movimento> movimentiCreati;
+
+    public Operatore() {
+        super();
+        this.movimentiCreati = new ArrayList<>();
+    }
+
+    public List<Movimento> getMovimentiCreati() {
+        return movimentiCreati;
+    }
+
+    public void setMovimentiCreati(List<Movimento> movimentiCreati) {
+        this.movimentiCreati = movimentiCreati;
+    }
+}
