@@ -69,10 +69,6 @@ public class DashboardForm extends JPanel {
             btnProdotti.addActionListener(e -> mainFrame.mostraSchermata("gestione_prodotto_menu"));
             gbc.gridy++; add(btnProdotti, gbc);
 
-            JButton btnMovimento = new JButton("Registra Movimento");
-            btnMovimento.addActionListener(e -> mainFrame.mostraSchermata("movimento"));
-            gbc.gridy++; add(btnMovimento, gbc);
-
             JButton btnStorico = new JButton("Visualizza Storico Movimenti");
             btnStorico.addActionListener(e -> mainFrame.mostraSchermata("storico"));
             gbc.gridy++; add(btnStorico, gbc);

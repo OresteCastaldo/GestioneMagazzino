@@ -40,6 +40,12 @@ public class MovimentoDAO {
             em.close();
         }
     }
+
+    public void eliminaMovimentiPerProdotto(String prodottoId, EntityManager em) {
+        em.createQuery("DELETE FROM Movimento m WHERE m.prodottoId = :id")
+          .setParameter("id", prodottoId)
+          .executeUpdate();
+    }
     
 
 }

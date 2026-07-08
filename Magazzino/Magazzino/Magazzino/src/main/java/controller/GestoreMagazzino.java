@@ -34,6 +34,20 @@ public class GestoreMagazzino {
         return catMovimento.RichiediMovimentiFiltrati(prodottoId);
     }
 
+    public List<Movimento> ApplicaFiltroFlessibile(String termine) {
+        List<Prodotto> prodotti = catProdotto.RicercaMultiplaFlessibile(termine);
+        java.util.List<Movimento> risultati = new java.util.ArrayList<>();
+        if (prodotti != null) {
+            for (Prodotto p : prodotti) {
+                List<Movimento> movs = catMovimento.RichiediMovimentiFiltrati(p.getCodiceId());
+                if (movs != null) {
+                    risultati.addAll(movs);
+                }
+            }
+        }
+        return risultati;
+    }
+
     private void mostraSingoloMovimento(Movimento m) {
         System.out.println("Movimento: " + m.getId());
     }
@@ -70,9 +84,11 @@ public class GestoreMagazzino {
     }
 
     public void InserisciProdotto(Prodotto prodotto) {
-        if (validaDatiProdotto(prodotto)) {
-            catProdotto.InserisciInCatalogo(prodotto);
-        }
+        catProdotto.InserisciInCatalogo(prodotto);
+    }
+
+    public String validaDatiProdotto(String codiceId, String nome, String descrizione, String categoria, String scaffale, String sogliaMinTxt, String quantitaTxt) {
+        return catProdotto.validaDatiProdotto(codiceId, nome, descrizione, categoria, scaffale, sogliaMinTxt, quantitaTxt);
     }
 
     public Prodotto CercaProdotto(String codiceId) {
@@ -82,12 +98,12 @@ public class GestoreMagazzino {
         return null;
     }
 
-    public void ChiudiFinestra() {
-        System.exit(0);
+    public Prodotto CercaProdottoFlessibile(String termine) {
+        return catProdotto.RicercaFlessibile(termine);
     }
 
-    public void ModificaProdotto(String codiceId) {
-        MostraModuloPrecompilato(codiceId);
+    public void ChiudiFinestra() {
+        System.exit(0);
     }
 
     public void salvaModifiche(Prodotto prodotto) {
@@ -98,9 +114,6 @@ public class GestoreMagazzino {
         catProdotto.EliminaProdotto(codiceId);
     }
 
-    private boolean validaDatiProdotto(Prodotto prodotto) {
-        return prodotto != null;
-    }
 
     private void setCurrenteUtente(Utente utente) {
         this.UtenteCorrente = utente;

@@ -39,9 +39,9 @@ public class StoricoMovimentiForm extends JPanel {
 
         // Pannello filtro
         JPanel panelFiltro = new JPanel(new FlowLayout());
-        JLabel lblFiltro = new JLabel("Codice Prodotto:");
+        JLabel lblFiltro = new JLabel("Cerca prodotto per ID, Nome o Scaffale:");
         txtFiltroProdotto = new JTextField(15);
-        btnFiltra = new JButton("Filtra");
+        btnFiltra = new JButton("Cerca");
         panelFiltro.add(lblFiltro);
         panelFiltro.add(txtFiltroProdotto);
         panelFiltro.add(btnFiltra);
@@ -76,18 +76,18 @@ public class StoricoMovimentiForm extends JPanel {
     }
 
     private void filtraMovimenti() {
-        String prodottoId = txtFiltroProdotto.getText().trim();
-        if (prodottoId.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Inserisci il codice prodotto per filtrare.", "Errore", JOptionPane.ERROR_MESSAGE);
+        String termine = txtFiltroProdotto.getText().trim();
+        if (termine.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Inserisci un termine per cercare.", "Errore", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         // Pulisci la tabella
         tableModel.setRowCount(0);
 
-        List<Movimento> movimenti = gestore.ApplicaFiltro(prodottoId);
+        List<Movimento> movimenti = gestore.ApplicaFiltroFlessibile(termine);
         if (movimenti == null || movimenti.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nessun movimento trovato per il prodotto: " + prodottoId, "Info", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Nessun movimento trovato per il termine: " + termine, "Info", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
