@@ -1,26 +1,44 @@
 package entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entità che rappresenta un prodotto in magazzino.
+ * Ha una relazione 1 a N con Movimento.
  */
 @Entity
+@Table(name = "prodotto")
 public class Prodotto {
 
     @Id
+    @Column(name = "id_prodotto")
     private String codiceId;
-    
+
+    @Column(name = "nome")
     private String nome;
+
+    @Column(name = "descrizione")
     private String descrizione;
+
+    @Column(name = "categoria")
     private String categoria;
-    private int sogliaMinDisponibile;
+
+    @Column(name = "quantita_disponibile")
     private int quantitaDisponibile;
+
+    @Column(name = "soglia_minima")
+    private int sogliaMinDisponibile;
+
+    @Column(name = "scaffale")
     private String scaffale;
 
+    @OneToMany(mappedBy = "prodotto")
+    private List<Movimento> movimenti;
+
     public Prodotto() {
+        this.movimenti = new ArrayList<>();
     }
 
     // Metodo descritto nel PlantUML
@@ -62,20 +80,20 @@ public class Prodotto {
         this.categoria = categoria;
     }
 
-    public int getSogliaMinDisponibile() {
-        return sogliaMinDisponibile;
-    }
-
-    public void setSogliaMinDisponibile(int sogliaMinDisponibile) {
-        this.sogliaMinDisponibile = sogliaMinDisponibile;
-    }
-
     public int getQuantitaDisponibile() {
         return quantitaDisponibile;
     }
 
     public void setQuantitaDisponibile(int quantitaDisponibile) {
         this.quantitaDisponibile = quantitaDisponibile;
+    }
+
+    public int getSogliaMinDisponibile() {
+        return sogliaMinDisponibile;
+    }
+
+    public void setSogliaMinDisponibile(int sogliaMinDisponibile) {
+        this.sogliaMinDisponibile = sogliaMinDisponibile;
     }
 
     public String getScaffale() {
@@ -86,4 +104,11 @@ public class Prodotto {
         this.scaffale = scaffale;
     }
 
+    public List<Movimento> getMovimenti() {
+        return movimenti;
+    }
+
+    public void setMovimenti(List<Movimento> movimenti) {
+        this.movimenti = movimenti;
+    }
 }

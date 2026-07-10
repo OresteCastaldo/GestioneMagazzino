@@ -1,34 +1,42 @@
 package entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import java.util.Date;
 
 /**
  * Entità che rappresenta un movimento di carico o scarico di un prodotto.
+ * Relazione N a 1 verso Operatore e N a 1 verso Prodotto.
  */
 @Entity
+@Table(name = "movimento")
 public class Movimento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // ID autogenerato per il database
+    @Column(name = "id_movimento")
+    private Long id;
 
+    @Column(name = "quantita")
     private int quantita;
+
+    @Column(name = "data")
     private Date data;
+
+    @Column(name = "tipologia")
     private String tipologia;
 
-    @Column(name = "prodotto_id")
-    private String prodottoId;
+    @ManyToOne
+    @JoinColumn(name = "id_prodotto")
+    private Prodotto prodotto;
 
     @ManyToOne
-    @JoinColumn(name = "operatore_email")
+    @JoinColumn(name = "id_operatore")
     private Operatore operatore;
+
+    // Campo Transient per mantenere la compatibilità con le Boundary
+    // che settano l'ID prodotto come stringa prima che il Controller risolva l'entità.
+    @Transient
+    private String prodottoId;
 
     public Movimento() {
     }
@@ -65,12 +73,12 @@ public class Movimento {
         this.tipologia = tipologia;
     }
 
-    public String getProdottoId() {
-        return prodottoId;
+    public Prodotto getProdotto() {
+        return prodotto;
     }
 
-    public void setProdottoId(String prodottoId) {
-        this.prodottoId = prodottoId;
+    public void setProdotto(Prodotto prodotto) {
+        this.prodotto = prodotto;
     }
 
     public Operatore getOperatore() {
@@ -79,5 +87,18 @@ public class Movimento {
 
     public void setOperatore(Operatore operatore) {
         this.operatore = operatore;
+    }
+
+    // --- Metodi di retrocompatibilità per il layer Boundary ---
+
+    public String getProdottoId() {
+        if (this.prodotto != null) {
+            return this.prodotto.getCodiceId();
+        }
+        return prodottoId;
+    }
+
+    public void setProdottoId(String prodottoId) {
+        this.prodottoId = prodottoId;
     }
 }

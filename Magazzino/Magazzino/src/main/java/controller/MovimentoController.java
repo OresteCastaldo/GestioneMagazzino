@@ -37,6 +37,9 @@ public class MovimentoController {
         if (prodottoId != null) {
             Prodotto p = prodottoDAO.trovaPerId(prodottoId);
             if (p != null) {
+                // Collega la vera entità al movimento
+                movimento.setProdotto(p);
+
                 int nuovaQta;
                 if (movimento.getTipologia() != null
                         && movimento.getTipologia().equalsIgnoreCase("CARICO")) {
@@ -60,7 +63,7 @@ public class MovimentoController {
         EntityManager em = JpaUtil.getInstance().getEntityManager();
         try {
             return em.createQuery(
-                "SELECT m FROM Movimento m WHERE m.prodottoId = :prodottoId", Movimento.class)
+                "SELECT m FROM Movimento m WHERE m.prodotto.codiceId = :prodottoId", Movimento.class)
                 .setParameter("prodottoId", prodottoId)
                 .getResultList();
         } finally {

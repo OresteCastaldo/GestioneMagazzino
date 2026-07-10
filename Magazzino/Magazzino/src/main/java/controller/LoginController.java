@@ -5,8 +5,7 @@ import entity.Utente;
 
 /**
  * Controller dedicato alla gestione dell'autenticazione e della sessione utente.
- * Ispirato alla struttura di IDS_Magazzino.LoginController,
- * adattato allo stack Hibernate/JPA del progetto.
+ * Valida l'accesso verificando email e password.
  */
 public class LoginController {
 
@@ -18,15 +17,19 @@ public class LoginController {
     }
 
     /**
-     * Effettua il login cercando l'utente per email tramite UtenteDAO (Hibernate).
+     * Effettua il login verificando email e password tramite UtenteDAO (Hibernate).
      * @param email l'email dell'utente
-     * @return true se l'utente è stato trovato e autenticato
+     * @param password la password dell'utente
+     * @return true se l'utente è stato trovato e la password corrisponde
      */
-    public boolean effettuaLogin(String email) {
+    public boolean effettuaLogin(String email, String password) {
         if (email == null || email.trim().isEmpty()) {
             return false;
         }
-        Utente u = utenteDAO.trovaPerEmail(email.trim());
+        if (password == null || password.trim().isEmpty()) {
+            return false;
+        }
+        Utente u = utenteDAO.trovaPerEmailEPassword(email.trim(), password.trim());
         if (u != null) {
             this.utenteCorrente = u;
             return true;

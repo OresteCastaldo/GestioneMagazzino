@@ -11,6 +11,7 @@ import java.awt.*;
 /**
  * Form Boundary per la registrazione di un nuovo utente.
  * Permette di scegliere tra Operatore e Responsabile.
+ * Include un JPasswordField per l'inserimento sicuro della password.
  * Comunica esclusivamente con il RegistrationController.
  */
 public class RegistrazioneForm extends JPanel {
@@ -21,6 +22,7 @@ public class RegistrazioneForm extends JPanel {
     private JTextField txtNome;
     private JTextField txtCognome;
     private JTextField txtEmail;
+    private JPasswordField txtPassword;
     private JComboBox<String> cmbTipoUtente;
     private JButton btnRegistrati;
     private JButton btnTornaLogin;
@@ -79,28 +81,39 @@ public class RegistrazioneForm extends JPanel {
         gbc.gridy = 3;
         add(txtEmail, gbc);
 
+        // Password
+        JLabel lblPassword = new JLabel("Password:");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        add(lblPassword, gbc);
+
+        txtPassword = new JPasswordField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        add(txtPassword, gbc);
+
         // Tipo Utente
         JLabel lblTipo = new JLabel("Tipo Utente:");
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         add(lblTipo, gbc);
 
         cmbTipoUtente = new JComboBox<>(new String[]{"OPERATORE", "RESPONSABILE"});
         gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         add(cmbTipoUtente, gbc);
 
         // Pulsante Registrati
         btnRegistrati = new JButton("Registrati");
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridwidth = 2;
         add(btnRegistrati, gbc);
 
         // Torna al Login
         btnTornaLogin = new JButton("Torna al Login");
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.gridwidth = 2;
         add(btnTornaLogin, gbc);
 
@@ -113,9 +126,10 @@ public class RegistrazioneForm extends JPanel {
         String nome = txtNome.getText().trim();
         String cognome = txtCognome.getText().trim();
         String email = txtEmail.getText().trim();
+        String password = new String(txtPassword.getPassword()).trim();
         String tipo = (String) cmbTipoUtente.getSelectedItem();
 
-        if (nome.isEmpty() || cognome.isEmpty() || email.isEmpty()) {
+        if (nome.isEmpty() || cognome.isEmpty() || email.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Tutti i campi sono obbligatori.", "Errore", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -129,6 +143,8 @@ public class RegistrazioneForm extends JPanel {
         utente.setNome(nome);
         utente.setCognome(cognome);
         utente.setEmail(email);
+        utente.setPassword(password);
+        utente.setRuolo(tipo);
 
         try {
             regCtrl.registraNuovoUtente(utente);
@@ -138,6 +154,7 @@ public class RegistrazioneForm extends JPanel {
             txtNome.setText("");
             txtCognome.setText("");
             txtEmail.setText("");
+            txtPassword.setText("");
 
             mainFrame.mostraSchermata("login");
         } catch (Exception ex) {

@@ -1,38 +1,19 @@
 package entity;
 
-import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 
 /**
- * Entità che rappresenta il responsabile del magazzino, che gestisce i prodotti.
+ * Entità che rappresenta il responsabile del magazzino.
+ * Tabella dedicata con join sulla chiave primaria di Utente.
  */
 @Entity
-@DiscriminatorValue("RESPONSABILE")
+@Table(name = "responsabile")
+@PrimaryKeyJoinColumn(name = "id_responsabile")
 public class Responsabile extends Utente {
-
-    @ManyToMany
-    @JoinTable(
-        name = "gestione_prodotti",
-        joinColumns = @JoinColumn(name = "responsabile_email"),
-        inverseJoinColumns = @JoinColumn(name = "prodotto_id")
-    )
-    private List<Prodotto> prodottiGestiti;
 
     public Responsabile() {
         super();
-        this.prodottiGestiti = new ArrayList<>();
-    }
-
-    public List<Prodotto> getProdottiGestiti() {
-        return prodottiGestiti;
-    }
-
-    public void setProdottiGestiti(List<Prodotto> prodottiGestiti) {
-        this.prodottiGestiti = prodottiGestiti;
     }
 }

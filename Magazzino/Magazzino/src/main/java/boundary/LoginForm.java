@@ -8,6 +8,7 @@ import java.awt.*;
 /**
  * Form Boundary per l'autenticazione dell'utente.
  * Comunica esclusivamente con il LoginController.
+ * Include un JPasswordField per l'inserimento sicuro della password.
  */
 public class LoginForm extends JPanel {
 
@@ -15,6 +16,7 @@ public class LoginForm extends JPanel {
     private MainFrame mainFrame;
 
     private JTextField txtEmail;
+    private JPasswordField txtPassword;
     private JButton btnAccedi;
     private JButton btnRegistrati;
 
@@ -50,17 +52,28 @@ public class LoginForm extends JPanel {
         gbc.gridy = 1;
         add(txtEmail, gbc);
 
+        // Password
+        JLabel lblPassword = new JLabel("Password:");
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        add(lblPassword, gbc);
+
+        txtPassword = new JPasswordField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        add(txtPassword, gbc);
+
         // Pulsante Accedi
         btnAccedi = new JButton("Accedi");
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;
         add(btnAccedi, gbc);
 
         // Pulsante Registrati
         btnRegistrati = new JButton("Non hai un account? Registrati");
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         add(btnRegistrati, gbc);
 
@@ -71,16 +84,24 @@ public class LoginForm extends JPanel {
 
     private void eseguiLogin() {
         String email = txtEmail.getText().trim();
+        String password = new String(txtPassword.getPassword()).trim();
+
         if (email.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Inserisci l'email.", "Errore", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        if (password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Inserisci la password.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        boolean autenticato = loginCtrl.effettuaLogin(email);
+        boolean autenticato = loginCtrl.effettuaLogin(email, password);
         if (autenticato) {
+            txtEmail.setText("");
+            txtPassword.setText("");
             mainFrame.mostraSchermata("dashboard");
         } else {
-            JOptionPane.showMessageDialog(this, "Utente non trovato.", "Errore di Autenticazione", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Email o password non corretti.", "Errore di Autenticazione", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
