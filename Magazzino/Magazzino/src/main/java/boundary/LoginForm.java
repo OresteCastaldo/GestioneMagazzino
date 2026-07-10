@@ -1,25 +1,25 @@
 package boundary;
 
-import controller.GestoreMagazzino;
+import controller.LoginController;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * Form Boundary per l'autenticazione dell'utente.
- * Comunica esclusivamente con il GestoreMagazzino (Facade).
+ * Comunica esclusivamente con il LoginController.
  */
 public class LoginForm extends JPanel {
 
-    private GestoreMagazzino gestore;
+    private LoginController loginCtrl;
     private MainFrame mainFrame;
 
     private JTextField txtEmail;
     private JButton btnAccedi;
     private JButton btnRegistrati;
 
-    public LoginForm(GestoreMagazzino gestore, MainFrame mainFrame) {
-        this.gestore = gestore;
+    public LoginForm(LoginController loginCtrl, MainFrame mainFrame) {
+        this.loginCtrl = loginCtrl;
         this.mainFrame = mainFrame;
         initComponents();
     }
@@ -76,7 +76,7 @@ public class LoginForm extends JPanel {
             return;
         }
 
-        boolean autenticato = gestore.Autenticazione(email);
+        boolean autenticato = loginCtrl.effettuaLogin(email);
         if (autenticato) {
             mainFrame.mostraSchermata("dashboard");
         } else {

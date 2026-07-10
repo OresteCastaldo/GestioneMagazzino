@@ -1,6 +1,6 @@
 package boundary;
 
-import controller.GestoreMagazzino;
+import controller.MovimentoController;
 import entity.Movimento;
 
 import javax.swing.*;
@@ -10,11 +10,11 @@ import java.util.List;
 
 /**
  * Form Boundary per la visualizzazione dello storico dei movimenti.
- * Comunica esclusivamente con il GestoreMagazzino (Facade).
+ * Comunica esclusivamente con il MovimentoController.
  */
 public class StoricoMovimentiForm extends JPanel {
 
-    private GestoreMagazzino gestore;
+    private MovimentoController movCtrl;
     private MainFrame mainFrame;
 
     private JTextField txtFiltroProdotto;
@@ -23,8 +23,8 @@ public class StoricoMovimentiForm extends JPanel {
     private JTable tabellaMovimenti;
     private DefaultTableModel tableModel;
 
-    public StoricoMovimentiForm(GestoreMagazzino gestore, MainFrame mainFrame) {
-        this.gestore = gestore;
+    public StoricoMovimentiForm(MovimentoController movCtrl, MainFrame mainFrame) {
+        this.movCtrl = movCtrl;
         this.mainFrame = mainFrame;
         initComponents();
     }
@@ -85,7 +85,7 @@ public class StoricoMovimentiForm extends JPanel {
         // Pulisci la tabella
         tableModel.setRowCount(0);
 
-        List<Movimento> movimenti = gestore.ApplicaFiltroFlessibile(termine);
+        List<Movimento> movimenti = movCtrl.getMovimentiFiltratiFlessibili(termine);
         if (movimenti == null || movimenti.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nessun movimento trovato per il termine: " + termine, "Info", JOptionPane.INFORMATION_MESSAGE);
             return;

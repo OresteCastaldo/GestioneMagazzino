@@ -1,6 +1,6 @@
 package boundary;
 
-import controller.GestoreMagazzino;
+import controller.RegistrationController;
 import entity.Operatore;
 import entity.Responsabile;
 import entity.Utente;
@@ -11,11 +11,11 @@ import java.awt.*;
 /**
  * Form Boundary per la registrazione di un nuovo utente.
  * Permette di scegliere tra Operatore e Responsabile.
- * Comunica esclusivamente con il GestoreMagazzino (Facade).
+ * Comunica esclusivamente con il RegistrationController.
  */
 public class RegistrazioneForm extends JPanel {
 
-    private GestoreMagazzino gestore;
+    private RegistrationController regCtrl;
     private MainFrame mainFrame;
 
     private JTextField txtNome;
@@ -25,8 +25,8 @@ public class RegistrazioneForm extends JPanel {
     private JButton btnRegistrati;
     private JButton btnTornaLogin;
 
-    public RegistrazioneForm(GestoreMagazzino gestore, MainFrame mainFrame) {
-        this.gestore = gestore;
+    public RegistrazioneForm(RegistrationController regCtrl, MainFrame mainFrame) {
+        this.regCtrl = regCtrl;
         this.mainFrame = mainFrame;
         initComponents();
     }
@@ -130,14 +130,18 @@ public class RegistrazioneForm extends JPanel {
         utente.setCognome(cognome);
         utente.setEmail(email);
 
-        gestore.Registrazione(utente);
-        JOptionPane.showMessageDialog(this, "Registrazione avvenuta con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
+        try {
+            regCtrl.registraNuovoUtente(utente);
+            JOptionPane.showMessageDialog(this, "Registrazione avvenuta con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
 
-        // Pulisci i campi
-        txtNome.setText("");
-        txtCognome.setText("");
-        txtEmail.setText("");
+            // Pulisci i campi
+            txtNome.setText("");
+            txtCognome.setText("");
+            txtEmail.setText("");
 
-        mainFrame.mostraSchermata("login");
+            mainFrame.mostraSchermata("login");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Errore di Registrazione", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

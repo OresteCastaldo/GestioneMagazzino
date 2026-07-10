@@ -1,6 +1,6 @@
 package boundary;
 
-import controller.GestoreMagazzino;
+import controller.LoginController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,15 +8,15 @@ import java.awt.*;
 /**
  * Form Boundary che funge da dashboard principale post-login.
  * Fornisce la navigazione verso le diverse funzionalità del sistema.
- * Comunica esclusivamente con il GestoreMagazzino (Facade).
+ * Comunica con il LoginController per ottenere i dati dell'utente corrente.
  */
 public class DashboardForm extends JPanel {
 
-    private GestoreMagazzino gestore;
+    private LoginController loginCtrl;
     private MainFrame mainFrame;
 
-    public DashboardForm(GestoreMagazzino gestore, MainFrame mainFrame) {
-        this.gestore = gestore;
+    public DashboardForm(LoginController loginCtrl, MainFrame mainFrame) {
+        this.loginCtrl = loginCtrl;
         this.mainFrame = mainFrame;
         initComponents();
     }
@@ -44,7 +44,7 @@ public class DashboardForm extends JPanel {
         gbc.gridy = 0;
         add(lblTitolo, gbc);
 
-        entity.Utente u = gestore.getUtenteCorrente();
+        entity.Utente u = loginCtrl.getUtenteCorrente();
         boolean isOperatore = (u instanceof entity.Operatore);
 
         if (isOperatore) {
@@ -79,7 +79,7 @@ public class DashboardForm extends JPanel {
         gbc.gridy++; add(btnLogout, gbc);
 
         JButton btnEsci = new JButton("Esci");
-        btnEsci.addActionListener(e -> gestore.ChiudiFinestra());
+        btnEsci.addActionListener(e -> System.exit(0));
         gbc.gridy++; add(btnEsci, gbc);
 
         revalidate();

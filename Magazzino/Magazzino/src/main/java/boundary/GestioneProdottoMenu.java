@@ -1,21 +1,18 @@
 package boundary;
 
-import controller.GestoreMagazzino;
-
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * Form Boundary che funge da sottomenu per la Gestione dei Prodotti.
  * Accessibile solo al Responsabile.
+ * Non necessita di alcun Controller — naviga solo tra schermate.
  */
 public class GestioneProdottoMenu extends JPanel {
 
-    private GestoreMagazzino gestore;
     private MainFrame mainFrame;
 
-    public GestioneProdottoMenu(GestoreMagazzino gestore, MainFrame mainFrame) {
-        this.gestore = gestore;
+    public GestioneProdottoMenu(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         initComponents();
     }

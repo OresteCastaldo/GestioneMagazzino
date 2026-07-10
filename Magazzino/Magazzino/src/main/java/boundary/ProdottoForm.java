@@ -1,6 +1,7 @@
 package boundary;
 
-import controller.GestoreMagazzino;
+import controller.LoginController;
+import controller.ProdottoController;
 import entity.Prodotto;
 
 import javax.swing.*;
@@ -8,11 +9,12 @@ import java.awt.*;
 
 /**
  * Form Boundary per l'inserimento e la modifica di un prodotto.
- * Comunica esclusivamente con il GestoreMagazzino (Facade).
+ * Comunica con LoginController (sessione utente) e ProdottoController (logica prodotti).
  */
 public class ProdottoForm extends JPanel {
 
-    private GestoreMagazzino gestore;
+    private LoginController loginCtrl;
+    private ProdottoController prodCtrl;
     private MainFrame mainFrame;
 
     private JTextField txtRicerca;
@@ -37,8 +39,9 @@ public class ProdottoForm extends JPanel {
     
     private String modalita = "";
 
-    public ProdottoForm(GestoreMagazzino gestore, MainFrame mainFrame) {
-        this.gestore = gestore;
+    public ProdottoForm(LoginController loginCtrl, ProdottoController prodCtrl, MainFrame mainFrame) {
+        this.loginCtrl = loginCtrl;
+        this.prodCtrl = prodCtrl;
         this.mainFrame = mainFrame;
         initComponents();
     }
@@ -134,7 +137,7 @@ public class ProdottoForm extends JPanel {
     }
 
     private void aggiornaVisibilita() {
-        entity.Utente u = gestore.getUtenteCorrente();
+        entity.Utente u = loginCtrl.getUtenteCorrente();
         boolean isResponsabile = (u instanceof entity.Responsabile);
 
         txtRicerca.setEnabled(true);
@@ -200,7 +203,7 @@ public class ProdottoForm extends JPanel {
         }
         
         // Uso la ricerca flessibile
-        Prodotto p = gestore.CercaProdottoFlessibile(termine);
+        Prodotto p = prodCtrl.cercaProdottoFlessibile(termine);
         if (p != null) {
             txtCodiceId.setText(p.getCodiceId());
             txtNome.setText(p.getNome());
@@ -221,7 +224,7 @@ public class ProdottoForm extends JPanel {
             bloccaTuttiICampi();
             
             // Mostro pulsanti di gestione per il Responsabile
-            entity.Utente u = gestore.getUtenteCorrente();
+            entity.Utente u = loginCtrl.getUtenteCorrente();
             if (u instanceof entity.Responsabile) {
                 btnModifica.setVisible(true);
                 btnSalvaModifiche.setVisible(false); // Nascosto finché non si clicca Modifica
@@ -276,7 +279,7 @@ public class ProdottoForm extends JPanel {
         String codiceId = ("INSERIMENTO".equals(modalita)) ? null : txtCodiceId.getText().trim();
         String categoria = (cmbCategoria.getSelectedItem() != null) ? cmbCategoria.getSelectedItem().toString() : "";
         
-        String errore = gestore.validaDatiProdotto(
+        String errore = prodCtrl.validaDatiProdotto(
             codiceId, 
             txtNome.getText(), 
             txtDescrizione.getText(), 
@@ -296,7 +299,7 @@ public class ProdottoForm extends JPanel {
         if (!isDatiValidi()) return;
         try {
             Prodotto p = creaProdottoDaForm();
-            gestore.InserisciProdotto(p);
+            prodCtrl.inserisciProdotto(p);
             JOptionPane.showMessageDialog(this, "Prodotto inserito con successo!\nID Assegnato: " + p.getCodiceId(), "Successo", JOptionPane.INFORMATION_MESSAGE);
             pulisciCampi();
         } catch (NumberFormatException ex) {
@@ -308,7 +311,7 @@ public class ProdottoForm extends JPanel {
         if (!isDatiValidi()) return;
         try {
             Prodotto p = creaProdottoDaForm();
-            gestore.salvaModifiche(p);
+            prodCtrl.salvaModifiche(p);
             JOptionPane.showMessageDialog(this, "Prodotto modificato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
             
             // Ritorna in sola lettura dopo il salvataggio
@@ -329,7 +332,7 @@ public class ProdottoForm extends JPanel {
         }
         int conferma = JOptionPane.showConfirmDialog(this, "Sei sicuro di voler eliminare il prodotto?", "Conferma Eliminazione", JOptionPane.YES_NO_OPTION);
         if (conferma == JOptionPane.YES_OPTION) {
-            gestore.EliminaProdotto(codiceId);
+            prodCtrl.eliminaProdotto(codiceId);
             JOptionPane.showMessageDialog(this, "Prodotto eliminato.", "Successo", JOptionPane.INFORMATION_MESSAGE);
             pulisciCampi();
             btnModifica.setVisible(false);

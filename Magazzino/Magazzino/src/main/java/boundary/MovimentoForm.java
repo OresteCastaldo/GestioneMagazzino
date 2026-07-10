@@ -1,6 +1,7 @@
 package boundary;
 
-import controller.GestoreMagazzino;
+import controller.ProdottoController;
+import controller.MovimentoController;
 import entity.Movimento;
 import entity.Operatore;
 import entity.Prodotto;
@@ -11,11 +12,12 @@ import java.util.Date;
 
 /**
  * Form Boundary per la registrazione di un movimento di carico o scarico.
- * Comunica esclusivamente con il GestoreMagazzino (Facade).
+ * Comunica con ProdottoController (ricerca prodotto) e MovimentoController (registrazione movimento).
  */
 public class MovimentoForm extends JPanel {
 
-    private GestoreMagazzino gestore;
+    private ProdottoController prodCtrl;
+    private MovimentoController movCtrl;
     private MainFrame mainFrame;
 
     private JTextField txtCodiceProdotto;
@@ -24,8 +26,9 @@ public class MovimentoForm extends JPanel {
     private JButton btnRegistra;
     private JButton btnTornaDashboard;
 
-    public MovimentoForm(GestoreMagazzino gestore, MainFrame mainFrame) {
-        this.gestore = gestore;
+    public MovimentoForm(ProdottoController prodCtrl, MovimentoController movCtrl, MainFrame mainFrame) {
+        this.prodCtrl = prodCtrl;
+        this.movCtrl = movCtrl;
         this.mainFrame = mainFrame;
         initComponents();
     }
@@ -108,7 +111,7 @@ public class MovimentoForm extends JPanel {
         try {
             int quantita = Integer.parseInt(quantitaStr);
 
-            Prodotto prodotto = gestore.CercaProdotto(codiceProdotto);
+            Prodotto prodotto = prodCtrl.cercaProdotto(codiceProdotto);
             if (prodotto == null) {
                 JOptionPane.showMessageDialog(this, "Prodotto non trovato con codice: " + codiceProdotto, "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -120,7 +123,7 @@ public class MovimentoForm extends JPanel {
             movimento.setTipologia(tipologia);
             movimento.setProdottoId(prodotto.getCodiceId());
 
-            gestore.RegistraMovimento(movimento);
+            movCtrl.registraMovimento(movimento);
             JOptionPane.showMessageDialog(this, "Movimento registrato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
 
             // Pulisci i campi

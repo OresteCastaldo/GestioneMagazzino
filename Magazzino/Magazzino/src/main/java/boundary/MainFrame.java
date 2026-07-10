@@ -1,6 +1,9 @@
 package boundary;
 
-import controller.GestoreMagazzino;
+import controller.LoginController;
+import controller.RegistrationController;
+import controller.ProdottoController;
+import controller.MovimentoController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,17 +11,24 @@ import java.awt.*;
 /**
  * Interfaccia principale (Boundary) per il sistema di Gestione Magazzino.
  * Utilizza un CardLayout per navigare tra i diversi form.
- * Comunica esclusivamente con il GestoreMagazzino (Facade).
+ * Istanzia i Controller dedicati e li distribuisce alle Boundary.
  */
 public class MainFrame extends JFrame {
 
-    private GestoreMagazzino gestore;
+    private LoginController loginCtrl;
+    private RegistrationController regCtrl;
+    private ProdottoController prodCtrl;
+    private MovimentoController movCtrl;
+
     private CardLayout cardLayout;
     private JPanel mainPanel;
     private JLabel lblIntestazione;
 
     public MainFrame() {
-        this.gestore = new GestoreMagazzino();
+        this.loginCtrl = new LoginController();
+        this.regCtrl = new RegistrationController();
+        this.prodCtrl = new ProdottoController();
+        this.movCtrl = new MovimentoController();
 
         setTitle("Sistema Gestione Magazzino");
         setSize(600, 500);
@@ -29,13 +39,13 @@ public class MainFrame extends JFrame {
         mainPanel = new JPanel(cardLayout);
 
         // Creazione di tutti i form (Boundary)
-        LoginForm loginForm = new LoginForm(gestore, this);
-        RegistrazioneForm registrazioneForm = new RegistrazioneForm(gestore, this);
-        DashboardForm dashboardForm = new DashboardForm(gestore, this);
-        ProdottoForm prodottoForm = new ProdottoForm(gestore, this);
-        GestioneProdottoMenu gestioneProdottoMenu = new GestioneProdottoMenu(gestore, this);
-        MovimentoForm movimentoForm = new MovimentoForm(gestore, this);
-        StoricoMovimentiForm storicoForm = new StoricoMovimentiForm(gestore, this);
+        LoginForm loginForm = new LoginForm(loginCtrl, this);
+        RegistrazioneForm registrazioneForm = new RegistrazioneForm(regCtrl, this);
+        DashboardForm dashboardForm = new DashboardForm(loginCtrl, this);
+        ProdottoForm prodottoForm = new ProdottoForm(loginCtrl, prodCtrl, this);
+        GestioneProdottoMenu gestioneProdottoMenu = new GestioneProdottoMenu(this);
+        MovimentoForm movimentoForm = new MovimentoForm(prodCtrl, movCtrl, this);
+        StoricoMovimentiForm storicoForm = new StoricoMovimentiForm(movCtrl, this);
 
         setLayout(new BorderLayout());
 
@@ -66,7 +76,7 @@ public class MainFrame extends JFrame {
      * Aggiorna l'intestazione con i dati dell'utente loggato.
      */
     public void aggiornaIntestazione() {
-        entity.Utente u = gestore.getUtenteCorrente();
+        entity.Utente u = loginCtrl.getUtenteCorrente();
         if (u != null) {
             String ruolo = (u instanceof entity.Operatore) ? "OPERATORE" : "RESPONSABILE";
             lblIntestazione.setText("Utente loggato: " + ruolo + " - " + u.getEmail());
