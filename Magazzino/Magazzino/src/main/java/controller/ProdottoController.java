@@ -63,13 +63,10 @@ public class ProdottoController {
 
     /**
      * Inserisce un nuovo prodotto nel catalogo.
-     * Se il codice ID non è impostato, ne genera uno univoco.
      * @param prodotto il prodotto da inserire
      */
     public void inserisciProdotto(Prodotto prodotto) {
-        if (prodotto.getCodiceId() == null || prodotto.getCodiceId().isEmpty()) {
-            prodotto.setCodiceId(generaIdUnivoco());
-        }
+        prodotto.setSottoScorta(prodotto.getQuantitaDisponibile() < prodotto.getSogliaMinDisponibile());
         prodottoDAO.salva(prodotto);
     }
 
@@ -78,7 +75,16 @@ public class ProdottoController {
      * @return null se tutti i controlli passano, altrimenti il messaggio di errore
      */
     public String validaDatiProdotto(String codiceId, String nome, String descrizione,
-            String categoria, String scaffale, String sogliaMinTxt, String quantitaTxt) {
+            String categoria, String scaffale, String sogliaMinTxt, String quantitaTxt, boolean isInserimento) {
+        
+        // 0. Validazione Codice ID
+        if (codiceId == null || codiceId.trim().isEmpty()) {
+            return "Il Codice ID è obbligatorio";
+        }
+        if (isInserimento && prodottoDAO.trovaPerId(codiceId.trim()) != null) {
+            return "Codice ID già in uso da un altro prodotto";
+        }
+
         // 1. Validazione Nome
         if (nome == null || nome.trim().isEmpty()) {
             return "Nome non valido";
@@ -129,6 +135,7 @@ public class ProdottoController {
      * @param prodotto il prodotto con i dati aggiornati
      */
     public void salvaModifiche(Prodotto prodotto) {
+        prodotto.setSottoScorta(prodotto.getQuantitaDisponibile() < prodotto.getSogliaMinDisponibile());
         prodottoDAO.aggiorna(prodotto);
     }
 
@@ -149,21 +156,10 @@ public class ProdottoController {
         Prodotto p = prodottoDAO.trovaPerId(codiceId);
         if (p != null) {
             p.setQuantitaDisponibile(nuovaQuantita);
+            p.setSottoScorta(p.getQuantitaDisponibile() < p.getSogliaMinDisponibile());
             prodottoDAO.aggiorna(p);
         }
     }
 
-    /**
-     * Genera un ID univoco a 6 cifre per un nuovo prodotto.
-     * @return l'ID generato, garantito univoco nel database
-     */
-    private String generaIdUnivoco() {
-        String id;
-        Random rnd = new Random();
-        do {
-            int number = rnd.nextInt(1000000); // Da 0 a 999999
-            id = String.format("%06d", number);
-        } while (prodottoDAO.trovaPerId(id) != null);
-        return id;
-    }
+    // Metodo generaIdUnivoco rimosso in quanto l'ID deve essere inserito manualmente
 }

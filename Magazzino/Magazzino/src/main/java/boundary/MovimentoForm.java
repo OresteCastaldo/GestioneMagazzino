@@ -123,12 +123,21 @@ public class MovimentoForm extends JPanel {
             movimento.setTipologia(tipologia);
             movimento.setProdottoId(prodotto.getCodiceId());
 
-            movCtrl.registraMovimento(movimento);
-            JOptionPane.showMessageDialog(this, "Movimento registrato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
+            try {
+                boolean sottoScorta = movCtrl.registraMovimento(movimento);
+                JOptionPane.showMessageDialog(this, "Movimento registrato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
 
-            // Pulisci i campi
-            txtCodiceProdotto.setText("");
-            txtQuantita.setText("");
+                if (sottoScorta) {
+                    JOptionPane.showMessageDialog(this, "Notifica inviata al Responsabile: la quantità attuale è inferiore alla soglia minima!", "Avviso Sotto Scorta", JOptionPane.WARNING_MESSAGE);
+                }
+
+                // Pulisci i campi
+                txtCodiceProdotto.setText("");
+                txtQuantita.setText("");
+
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Errore Quantità", JOptionPane.ERROR_MESSAGE);
+            }
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "La quantità deve essere un numero intero.", "Errore", JOptionPane.ERROR_MESSAGE);

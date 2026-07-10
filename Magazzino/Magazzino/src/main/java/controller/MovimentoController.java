@@ -32,7 +32,8 @@ public class MovimentoController {
      * Aggiorna automaticamente la quantità disponibile del prodotto associato.
      * @param movimento il movimento da registrare
      */
-    public void registraMovimento(Movimento movimento) {
+    public boolean registraMovimento(Movimento movimento) throws IllegalArgumentException {
+        boolean sottoScortaTriggered = false;
         String prodottoId = movimento.getProdottoId();
         if (prodottoId != null) {
             Prodotto p = prodottoDAO.trovaPerId(prodottoId);
@@ -45,13 +46,23 @@ public class MovimentoController {
                         && movimento.getTipologia().equalsIgnoreCase("CARICO")) {
                     nuovaQta = p.getQuantitaDisponibile() + movimento.getQuantita();
                 } else {
+                    if (movimento.getQuantita() > p.getQuantitaDisponibile()) {
+                        throw new IllegalArgumentException("Quantità insufficiente in magazzino!");
+                    }
                     nuovaQta = p.getQuantitaDisponibile() - movimento.getQuantita();
                 }
                 p.setQuantitaDisponibile(nuovaQta);
+                p.setSottoScorta(p.getQuantitaDisponibile() < p.getSogliaMinDisponibile());
                 prodottoDAO.aggiorna(p);
+                
+                // Segnala se il prodotto si trova sotto scorta dopo il movimento (qualsiasi tipo)
+                if (p.isSottoScorta()) {
+                    sottoScortaTriggered = true;
+                }
             }
         }
         movimentoDAO.salva(movimento);
+        return sottoScortaTriggered;
     }
 
     /**
@@ -89,5 +100,64 @@ public class MovimentoController {
             }
         }
         return risultati;
+    }
+
+    /**
+     * Restituisce i movimenti per un prodotto con filtri opzionali.
+     * Gestisce la conversione sicura delle date da stringa (formato gg/MM/yyyy).
+     * @param codiceProdotto ID del prodotto (obbligatorio)
+     * @param dataInizioStr data inizio come stringa gg/MM/yyyy (opzionale)
+     * @param dataFineStr data fine come stringa gg/MM/yyyy (opzionale)
+     * @param tipoMovimento tipo CARICO/SCARICO (opzionale, null/"Tutti" = tutti)
+     * @return la lista dei movimenti che soddisfano i criteri
+     * @throws IllegalArgumentException se una data inserita ha un formato non valido
+     */
+    public List<Movimento> getStoricoConFiltri(String codiceProdotto, String dataInizioStr,
+            String dataFineStr, String tipoMovimento) throws IllegalArgumentException {
+
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        sdf.setLenient(false);
+
+        java.util.Date dataInizio = null;
+        java.util.Date dataFine = null;
+
+        if (dataInizioStr != null && !dataInizioStr.trim().isEmpty()) {
+            try {
+                dataInizio = sdf.parse(dataInizioStr.trim());
+                // Forza l'orario alle 00:00:00 per includere l'intero giorno di inizio
+                java.util.Calendar calInizio = java.util.Calendar.getInstance();
+                calInizio.setTime(dataInizio);
+                calInizio.set(java.util.Calendar.HOUR_OF_DAY, 0);
+                calInizio.set(java.util.Calendar.MINUTE, 0);
+                calInizio.set(java.util.Calendar.SECOND, 0);
+                calInizio.set(java.util.Calendar.MILLISECOND, 0);
+                dataInizio = calInizio.getTime();
+            } catch (java.text.ParseException e) {
+                throw new IllegalArgumentException("Formato Data Inizio non valido. Usa il formato gg/MM/aaaa.");
+            }
+        }
+
+        if (dataFineStr != null && !dataFineStr.trim().isEmpty()) {
+            try {
+                dataFine = sdf.parse(dataFineStr.trim());
+                // Imposta la data fine alla fine della giornata (23:59:59)
+                java.util.Calendar cal = java.util.Calendar.getInstance();
+                cal.setTime(dataFine);
+                cal.set(java.util.Calendar.HOUR_OF_DAY, 23);
+                cal.set(java.util.Calendar.MINUTE, 59);
+                cal.set(java.util.Calendar.SECOND, 59);
+                dataFine = cal.getTime();
+            } catch (java.text.ParseException e) {
+                throw new IllegalArgumentException("Formato Data Fine non valido. Usa il formato gg/MM/aaaa.");
+            }
+        }
+
+        // Se il tipo è "Tutti" o vuoto, passa null al DAO
+        String tipo = null;
+        if (tipoMovimento != null && !tipoMovimento.trim().isEmpty() && !tipoMovimento.equals("Tutti")) {
+            tipo = tipoMovimento.trim();
+        }
+
+        return movimentoDAO.ricercaStoricoConFiltri(codiceProdotto, dataInizio, dataFine, tipo);
     }
 }

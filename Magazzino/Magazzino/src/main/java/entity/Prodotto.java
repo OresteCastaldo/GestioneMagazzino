@@ -34,6 +34,9 @@ public class Prodotto {
     @Column(name = "scaffale")
     private String scaffale;
 
+    @Column(name = "sotto_scorta")
+    private boolean sottoScorta;
+
     @OneToMany(mappedBy = "prodotto")
     private List<Movimento> movimenti;
 
@@ -104,6 +107,14 @@ public class Prodotto {
         this.scaffale = scaffale;
     }
 
+    public boolean isSottoScorta() {
+        return sottoScorta;
+    }
+
+    public void setSottoScorta(boolean sottoScorta) {
+        this.sottoScorta = sottoScorta;
+    }
+
     public List<Movimento> getMovimenti() {
         return movimenti;
     }
@@ -111,4 +122,5 @@ public class Prodotto {
     public void setMovimenti(List<Movimento> movimenti) {
         this.movimenti = movimenti;
     }
+
 }

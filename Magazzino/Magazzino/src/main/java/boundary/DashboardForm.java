@@ -53,7 +53,7 @@ public class DashboardForm extends JPanel {
             gbc.gridy++; add(btnMovimento, gbc);
 
             JButton btnRicercaProdotto = new JButton("Ricerca Prodotto");
-            btnRicercaProdotto.addActionListener(e -> mainFrame.mostraSchermata("prodotto"));
+            btnRicercaProdotto.addActionListener(e -> JOptionPane.showMessageDialog(this, "Al momento non disponibile"));
             gbc.gridy++; add(btnRicercaProdotto, gbc);
 
             JButton btnElencoProdotti = new JButton("Visualizza Elenco Prodotti");

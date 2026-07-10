@@ -25,6 +25,7 @@ public class ProdottoForm extends JPanel {
     private JTextField txtScaffale;
     private JTextField txtSogliaMin;
     private JTextField txtQuantita;
+    private JCheckBox chkSottoScorta;
 
     private JLabel lblTitolo;
     private JPanel panelRicerca;
@@ -92,6 +93,12 @@ public class ProdottoForm extends JPanel {
         addCampo("Soglia Minima:", txtSogliaMin = new JTextField(20), gbc, 7);
         addCampo("Quantità:", txtQuantita = new JTextField(20), gbc, 8);
 
+        chkSottoScorta = new JCheckBox("Sotto Scorta");
+        chkSottoScorta.setEnabled(false); // Sola lettura
+        gbc.gridx = 0; gbc.gridy = 9; gbc.gridwidth = 2;
+        add(chkSottoScorta, gbc);
+        gbc.gridwidth = 1;
+
         // Pannello pulsanti inferiori
         JPanel panelPulsanti = new JPanel(new FlowLayout());
         btnInserisci = new JButton("Inserisci");
@@ -106,11 +113,11 @@ public class ProdottoForm extends JPanel {
         panelPulsanti.add(btnElimina);
 
         gbc.gridx = 0;
-        gbc.gridy = 9;
+        gbc.gridy = 10;
         gbc.gridwidth = 2;
         add(panelPulsanti, gbc);
 
-        gbc.gridy = 10;
+        gbc.gridy = 11;
         add(btnTornaDashboard, gbc);
 
         // Action Listeners
@@ -160,8 +167,9 @@ public class ProdottoForm extends JPanel {
                 btnCerca.setVisible(false);
                 txtRicerca.setEnabled(false); // Disabilita ricerca in inserimento
                 
-                lblCodiceId.setVisible(false);
-                txtCodiceId.setVisible(false);
+                lblCodiceId.setVisible(true);
+                txtCodiceId.setVisible(true);
+                txtCodiceId.setText("");
                 
                 btnInserisci.setVisible(true);
                 btnModifica.setVisible(false);
@@ -219,6 +227,7 @@ public class ProdottoForm extends JPanel {
             txtScaffale.setText(p.getScaffale());
             txtSogliaMin.setText(String.valueOf(p.getSogliaMinDisponibile()));
             txtQuantita.setText(String.valueOf(p.getQuantitaDisponibile()));
+            chkSottoScorta.setSelected(p.isSottoScorta());
             
             // Stato Iniziale di Sola Lettura
             bloccaTuttiICampi();
@@ -276,7 +285,8 @@ public class ProdottoForm extends JPanel {
     }
 
     private boolean isDatiValidi() {
-        String codiceId = ("INSERIMENTO".equals(modalita)) ? null : txtCodiceId.getText().trim();
+        String codiceId = txtCodiceId.getText().trim();
+        boolean isInserimento = "INSERIMENTO".equals(modalita);
         String categoria = (cmbCategoria.getSelectedItem() != null) ? cmbCategoria.getSelectedItem().toString() : "";
         
         String errore = prodCtrl.validaDatiProdotto(
@@ -286,7 +296,8 @@ public class ProdottoForm extends JPanel {
             categoria, 
             txtScaffale.getText(), 
             txtSogliaMin.getText(), 
-            txtQuantita.getText()
+            txtQuantita.getText(),
+            isInserimento
         );
         if (errore != null) {
             JOptionPane.showMessageDialog(this, errore, "Errore di Validazione", JOptionPane.ERROR_MESSAGE);
@@ -300,7 +311,7 @@ public class ProdottoForm extends JPanel {
         try {
             Prodotto p = creaProdottoDaForm();
             prodCtrl.inserisciProdotto(p);
-            JOptionPane.showMessageDialog(this, "Prodotto inserito con successo!\nID Assegnato: " + p.getCodiceId(), "Successo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Prodotto inserito con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
             pulisciCampi();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Soglia e Quantità devono essere numeri interi.", "Errore", JOptionPane.ERROR_MESSAGE);
@@ -313,6 +324,9 @@ public class ProdottoForm extends JPanel {
             Prodotto p = creaProdottoDaForm();
             prodCtrl.salvaModifiche(p);
             JOptionPane.showMessageDialog(this, "Prodotto modificato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Aggiorna istantaneamente la spunta in UI ricalcolando il valore dall'entità
+            chkSottoScorta.setSelected(p.isSottoScorta());
             
             // Ritorna in sola lettura dopo il salvataggio
             bloccaTuttiICampi();
@@ -373,5 +387,8 @@ public class ProdottoForm extends JPanel {
         txtScaffale.setText("");
         txtSogliaMin.setText("");
         txtQuantita.setText("");
+        if (chkSottoScorta != null) {
+            chkSottoScorta.setSelected(false);
+        }
     }
 }
