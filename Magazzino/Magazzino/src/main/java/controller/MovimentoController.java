@@ -147,6 +147,17 @@ public class MovimentoController {
     }
 
     /**
+     * Ricerca flessibile per la GUI: restituisce List<MovimentoDTO> invece di List<Movimento>.
+     * La conversione Entity→DTO avviene interamente qui, nel Controller.
+     * @param termine il termine di ricerca (ID, nome o scaffale)
+     * @return la lista di MovimentoDTO corrispondenti
+     */
+    public List<MovimentoDTO> getMovimentiFiltratiFlessibiliDTO(String termine) {
+        List<Movimento> entita = getMovimentiFiltratiFlessibili(termine);
+        return convertiInDTO(entita);
+    }
+
+    /**
      * Restituisce i movimenti per un prodotto con filtri opzionali.
      * Gestisce la conversione sicura delle date da stringa (formato gg/MM/yyyy).
      * @param codiceProdotto ID del prodotto (obbligatorio)
@@ -203,5 +214,43 @@ public class MovimentoController {
         }
 
         return movimentoDAO.ricercaStoricoConFiltri(codiceProdotto, dataInizio, dataFine, tipo);
+    }
+
+    /**
+     * Versione DTO di getStoricoConFiltri per il livello Boundary.
+     * La conversione Entity→DTO avviene interamente qui, nel Controller.
+     * @param codiceProdotto ID del prodotto (obbligatorio)
+     * @param dataInizioStr data inizio gg/MM/yyyy (opzionale)
+     * @param dataFineStr data fine gg/MM/yyyy (opzionale)
+     * @param tipoMovimento CARICO/SCARICO/Tutti (opzionale)
+     * @return la lista di MovimentoDTO che soddisfano i criteri
+     * @throws IllegalArgumentException se una data ha formato non valido
+     */
+    public List<MovimentoDTO> getStoricoConFiltriDTO(String codiceProdotto, String dataInizioStr,
+            String dataFineStr, String tipoMovimento) throws IllegalArgumentException {
+        List<Movimento> entita = getStoricoConFiltri(codiceProdotto, dataInizioStr, dataFineStr, tipoMovimento);
+        return convertiInDTO(entita);
+    }
+
+    /**
+     * Metodo interno per convertire una lista di Entity Movimento in una lista di MovimentoDTO.
+     * @param movimenti la lista di entity da convertire
+     * @return la lista di DTO corrispondenti
+     */
+    private List<MovimentoDTO> convertiInDTO(List<Movimento> movimenti) {
+        List<MovimentoDTO> dtoList = new ArrayList<>();
+        if (movimenti != null) {
+            for (Movimento m : movimenti) {
+                MovimentoDTO dto = new MovimentoDTO(
+                    m.getId(),
+                    m.getProdottoId() != null ? m.getProdottoId() : "N/A",
+                    m.getQuantita(),
+                    m.getTipologia(),
+                    m.getData()
+                );
+                dtoList.add(dto);
+            }
+        }
+        return dtoList;
     }
 }

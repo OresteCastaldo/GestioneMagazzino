@@ -1,7 +1,7 @@
 package boundary;
 
 import controller.MovimentoController;
-import entity.Movimento;
+import dto.MovimentoDTO;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -162,7 +162,8 @@ public class StoricoMovimentiForm extends JPanel {
         // Pulisci la tabella
         tableModel.setRowCount(0);
 
-        List<Movimento> movimenti = movCtrl.getMovimentiFiltratiFlessibili(termine);
+        // Uso la ricerca flessibile tramite DTO (nessuna dipendenza da Entity)
+        List<MovimentoDTO> movimenti = movCtrl.getMovimentiFiltratiFlessibiliDTO(termine);
         if (movimenti == null || movimenti.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nessun movimento trovato per il termine: " + termine, "Info", JOptionPane.INFORMATION_MESSAGE);
             codiceProdottoCorrente = null;
@@ -171,7 +172,7 @@ public class StoricoMovimentiForm extends JPanel {
         }
 
         // Recupera il codice prodotto dal primo movimento trovato
-        codiceProdottoCorrente = movimenti.get(0).getProdottoId();
+        codiceProdottoCorrente = movimenti.get(0).getCodiceProdotto();
 
         // Abilita i filtri avanzati
         abilitaFiltriAvanzati(true);
@@ -211,7 +212,7 @@ public class StoricoMovimentiForm extends JPanel {
         }
 
         try {
-            List<Movimento> movimenti = movCtrl.getStoricoConFiltri(
+            List<MovimentoDTO> movimenti = movCtrl.getStoricoConFiltriDTO(
                     codiceProdottoCorrente, dataInizioStr, dataFineStr, tipoMovimento);
 
             tableModel.setRowCount(0);
@@ -240,7 +241,7 @@ public class StoricoMovimentiForm extends JPanel {
 
         if (codiceProdottoCorrente != null && !codiceProdottoCorrente.isEmpty()) {
             tableModel.setRowCount(0);
-            List<Movimento> movimenti = movCtrl.getMovimentiFiltratiFlessibili(txtFiltroProdotto.getText().trim());
+            List<MovimentoDTO> movimenti = movCtrl.getMovimentiFiltratiFlessibiliDTO(txtFiltroProdotto.getText().trim());
             if (movimenti != null && !movimenti.isEmpty()) {
                 popolaTabella(movimenti);
             }
@@ -248,13 +249,13 @@ public class StoricoMovimentiForm extends JPanel {
     }
 
     /**
-     * Popola la tabella con i movimenti forniti.
+     * Popola la tabella con i movimenti forniti come DTO.
      */
-    private void popolaTabella(List<Movimento> movimenti) {
-        for (Movimento m : movimenti) {
+    private void popolaTabella(List<MovimentoDTO> movimenti) {
+        for (MovimentoDTO m : movimenti) {
             Object[] riga = {
                 m.getId(),
-                m.getProdottoId() != null ? m.getProdottoId() : "N/A",
+                m.getCodiceProdotto(),
                 m.getQuantita(),
                 m.getTipologia(),
                 m.getData()
