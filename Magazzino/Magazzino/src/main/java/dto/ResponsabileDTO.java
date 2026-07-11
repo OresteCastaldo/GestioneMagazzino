@@ -1,39 +1,38 @@
 package dto;
 
 /**
- * Data Transfer Object per il trasporto dei dati di sessione dell'utente
+ * Data Transfer Object per il trasporto dei dati anagrafici di un Responsabile
  * dal livello Controller al livello Boundary.
- * Nasconde completamente la gerarchia Entity (Utente, Operatore, Responsabile)
- * e delega la logica instanceof al Controller.
+ * Non contiene alcuna dipendenza dal livello Entity o Database.
  */
-public class UtenteDTO {
+public class ResponsabileDTO {
 
+    private Long idUtente;
     private String nome;
     private String cognome;
     private String email;
     private String ruolo;
 
-    public UtenteDTO() {
+    public ResponsabileDTO() {
     }
 
-    public UtenteDTO(String nome, String cognome, String email, String ruolo) {
+    public ResponsabileDTO(Long idUtente, String nome, String cognome, String email, String ruolo) {
+        this.idUtente = idUtente;
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
         this.ruolo = ruolo;
     }
 
-    // --- Helper per il controllo del ruolo ---
+    // --- Getters e Setters ---
 
-    /**
-     * Verifica se l'utente ha il ruolo di Responsabile.
-     * @return true se il ruolo è RESPONSABILE
-     */
-    public boolean isResponsabile() {
-        return "RESPONSABILE".equals(ruolo);
+    public Long getIdUtente() {
+        return idUtente;
     }
 
-    // --- Getters e Setters ---
+    public void setIdUtente(Long idUtente) {
+        this.idUtente = idUtente;
+    }
 
     public String getNome() {
         return nome;

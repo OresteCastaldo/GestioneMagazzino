@@ -1,7 +1,6 @@
 package controller;
 
 import database.UtenteDAO;
-import dto.UtenteDTO;
 import entity.Responsabile;
 import entity.Utente;
 
@@ -45,24 +44,6 @@ public class LoginController {
      */
     public Utente getUtenteCorrente() {
         return utenteCorrente;
-    }
-
-    /**
-     * Restituisce un DTO dell'utente corrente, privo di dipendenze Entity.
-     * Usato dal livello Boundary per conoscere il ruolo senza accoppiamento.
-     * @return il UtenteDTO con i dati di sessione, o null se nessuno è loggato
-     */
-    public UtenteDTO getUtenteCorrenteDTO() {
-        if (utenteCorrente == null) {
-            return null;
-        }
-        String ruolo = (utenteCorrente instanceof Responsabile) ? "RESPONSABILE" : "OPERATORE";
-        return new UtenteDTO(
-            utenteCorrente.getNome(),
-            utenteCorrente.getCognome(),
-            utenteCorrente.getEmail(),
-            ruolo
-        );
     }
 
     /**
