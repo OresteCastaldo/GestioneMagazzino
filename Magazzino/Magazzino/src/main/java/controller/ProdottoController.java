@@ -1,6 +1,7 @@
 package controller;
 
 import database.ProdottoDAO;
+import dto.ProdottoDTO;
 import entity.Prodotto;
 import java.util.Arrays;
 import java.util.List;
@@ -44,12 +45,49 @@ public class ProdottoController {
     }
 
     /**
+     * Cerca un prodotto per codice ID e restituisce un DTO (Data Transfer Object)
+     * privo di dipendenze dal livello Entity. Usato dal livello Boundary.
+     * @param codiceProdotto il codice identificativo del prodotto
+     * @return il ProdottoDTO con i dati base, o null se non esiste
+     */
+    public ProdottoDTO cercaProdottoDTO(String codiceProdotto) {
+        Prodotto p = cercaProdotto(codiceProdotto);
+        if (p != null) {
+            return new ProdottoDTO(p.getCodiceId(), p.getNome(), p.getQuantitaDisponibile());
+        }
+        return null;
+    }
+
+    /**
      * Ricerca flessibile per ID, nome o scaffale (restituisce il primo risultato).
      * @param termine il termine di ricerca
      * @return il primo prodotto trovato, o null
      */
     public Prodotto cercaProdottoFlessibile(String termine) {
         return prodottoDAO.ricercaFlessibile(termine);
+    }
+
+    /**
+     * Ricerca flessibile per ID, nome o scaffale e restituisce un DTO
+     * privo di dipendenze dal livello Entity. Usato dal livello Boundary.
+     * @param termine il termine di ricerca
+     * @return il ProdottoDTO con tutti i dati per la GUI, o null se non trovato
+     */
+    public ProdottoDTO cercaProdottoFlessibileDTO(String termine) {
+        Prodotto p = cercaProdottoFlessibile(termine);
+        if (p != null) {
+            return new ProdottoDTO(
+                p.getCodiceId(),
+                p.getNome(),
+                p.getDescrizione(),
+                p.getCategoria(),
+                p.getScaffale(),
+                p.getSogliaMinDisponibile(),
+                p.getQuantitaDisponibile(),
+                p.isSottoScorta()
+            );
+        }
+        return null;
     }
 
     /**
@@ -137,6 +175,45 @@ public class ProdottoController {
     public void salvaModifiche(Prodotto prodotto) {
         prodotto.setSottoScorta(prodotto.getQuantitaDisponibile() < prodotto.getSogliaMinDisponibile());
         prodottoDAO.aggiorna(prodotto);
+    }
+
+    /**
+     * Inserisce un nuovo prodotto a partire da un DTO proveniente dal livello Boundary.
+     * Converte il DTO in un'Entity e delega l'inserimento al metodo standard.
+     * @param dto il ProdottoDTO con i dati provenienti dalla grafica
+     */
+    public void inserisciProdottoDaDTO(ProdottoDTO dto) {
+        Prodotto p = mappaDTOaEntity(dto);
+        inserisciProdotto(p);
+    }
+
+    /**
+     * Salva le modifiche a un prodotto esistente a partire da un DTO proveniente dal livello Boundary.
+     * Converte il DTO in un'Entity e delega il salvataggio al metodo standard.
+     * @param dto il ProdottoDTO con i dati aggiornati dalla grafica
+     * @return true se il prodotto risulta sotto scorta dopo il salvataggio
+     */
+    public boolean salvaModificheDaDTO(ProdottoDTO dto) {
+        Prodotto p = mappaDTOaEntity(dto);
+        salvaModifiche(p);
+        return p.isSottoScorta();
+    }
+
+    /**
+     * Metodo interno per convertire un ProdottoDTO in un'Entity Prodotto.
+     * @param dto il DTO da convertire
+     * @return l'Entity Prodotto popolata con i dati del DTO
+     */
+    private Prodotto mappaDTOaEntity(ProdottoDTO dto) {
+        Prodotto p = new Prodotto();
+        p.setCodiceId(dto.getCodiceId());
+        p.setNome(dto.getNome());
+        p.setDescrizione(dto.getDescrizione());
+        p.setCategoria(dto.getCategoria());
+        p.setScaffale(dto.getScaffale());
+        p.setSogliaMinDisponibile(dto.getSogliaMinDisponibile());
+        p.setQuantitaDisponibile(dto.getQuantitaDisponibile());
+        return p;
     }
 
     /**

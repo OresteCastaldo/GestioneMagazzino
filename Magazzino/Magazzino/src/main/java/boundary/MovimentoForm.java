@@ -2,17 +2,15 @@ package boundary;
 
 import controller.ProdottoController;
 import controller.MovimentoController;
-import entity.Movimento;
-import entity.Operatore;
-import entity.Prodotto;
+import dto.MovimentoDTO;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Date;
 
 /**
  * Form Boundary per la registrazione di un movimento di carico o scarico.
  * Comunica con ProdottoController (ricerca prodotto) e MovimentoController (registrazione movimento).
+ * Utilizza il pattern DTO per disaccoppiare completamente la Boundary dal livello Entity.
  */
 public class MovimentoForm extends JPanel {
 
@@ -116,20 +114,12 @@ public class MovimentoForm extends JPanel {
         try {
             int quantita = Integer.parseInt(quantitaStr);
 
-            Prodotto prodotto = prodCtrl.cercaProdotto(codiceProdotto);
-            if (prodotto == null) {
-                JOptionPane.showMessageDialog(this, "Prodotto non trovato con codice: " + codiceProdotto, "Errore", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            Movimento movimento = new Movimento();
-            movimento.setQuantita(quantita);
-            movimento.setData(new Date());
-            movimento.setTipologia(tipologia);
-            movimento.setProdottoId(prodotto.getCodiceId());
+            // Creazione del DTO con i dati della grafica (nessuna dipendenza da Entity)
+            MovimentoDTO dto = new MovimentoDTO(codiceProdotto, quantita, tipologia);
 
             try {
-                boolean sottoScorta = movCtrl.registraMovimento(movimento);
+                // Invio del DTO al Controller, che si occuperà della conversione in Entity
+                boolean sottoScorta = movCtrl.registraMovimentoDaDTO(dto);
                 JOptionPane.showMessageDialog(this, "Movimento registrato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
 
                 if (sottoScorta) {

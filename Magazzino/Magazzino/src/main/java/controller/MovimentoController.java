@@ -3,10 +3,12 @@ package controller;
 import database.MovimentoDAO;
 import database.ProdottoDAO;
 import database.JpaUtil;
+import dto.MovimentoDTO;
 import entity.Movimento;
 import entity.Prodotto;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,6 +79,34 @@ public class MovimentoController {
         }
         movimentoDAO.salva(movimento);
         return sottoScortaTriggered;
+    }
+
+    /**
+     * Registra un movimento a partire da un DTO proveniente dal livello Boundary.
+     * Converte il DTO in un'Entity, risolve il Prodotto associato e delega
+     * la registrazione al metodo standard registraMovimento.
+     * @param dto il MovimentoDTO con i dati provenienti dalla grafica
+     * @return true se il prodotto risulta sotto scorta dopo il movimento
+     * @throws IllegalArgumentException se il prodotto non viene trovato o i dati non sono validi
+     */
+    public boolean registraMovimentoDaDTO(MovimentoDTO dto) throws IllegalArgumentException {
+        // a. Verifica l'esistenza del prodotto tramite il codice nel DTO
+        Prodotto prodotto = prodottoDAO.trovaPerId(dto.getCodiceProdotto());
+        if (prodotto == null) {
+            throw new IllegalArgumentException("Prodotto non trovato con codice: " + dto.getCodiceProdotto());
+        }
+
+        // b. Crea una nuova istanza dell'Entity Movimento
+        Movimento movimento = new Movimento();
+
+        // c. Popola l'Entity con i dati del DTO
+        movimento.setQuantita(dto.getQuantita());
+        movimento.setTipologia(dto.getTipologia());
+        movimento.setData(new Date());
+        movimento.setProdottoId(prodotto.getCodiceId());
+
+        // d. Delega al metodo standard di registrazione e restituisce il risultato
+        return registraMovimento(movimento);
     }
 
     /**

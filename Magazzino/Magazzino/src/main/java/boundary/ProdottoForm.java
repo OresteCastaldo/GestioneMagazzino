@@ -2,7 +2,7 @@ package boundary;
 
 import controller.LoginController;
 import controller.ProdottoController;
-import entity.Prodotto;
+import dto.ProdottoDTO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +10,7 @@ import java.awt.*;
 /**
  * Form Boundary per l'inserimento e la modifica di un prodotto.
  * Comunica con LoginController (sessione utente) e ProdottoController (logica prodotti).
+ * Utilizza il pattern DTO per disaccoppiare completamente la Boundary dal livello Entity.
  */
 public class ProdottoForm extends JPanel {
 
@@ -144,8 +145,8 @@ public class ProdottoForm extends JPanel {
     }
 
     private void aggiornaVisibilita() {
-        entity.Utente u = loginCtrl.getUtenteCorrente();
-        boolean isResponsabile = (u instanceof entity.Responsabile);
+        String ruolo = loginCtrl.getRuoloUtenteCorrente();
+        boolean isResponsabile = "RESPONSABILE".equals(ruolo);
 
         txtRicerca.setEnabled(true);
         lblCodiceId.setVisible(true);
@@ -215,8 +216,8 @@ public class ProdottoForm extends JPanel {
             return;
         }
         
-        // Uso la ricerca flessibile
-        Prodotto p = prodCtrl.cercaProdottoFlessibile(termine);
+        // Uso la ricerca flessibile tramite DTO (nessuna dipendenza da Entity)
+        ProdottoDTO p = prodCtrl.cercaProdottoFlessibileDTO(termine);
         if (p != null) {
             txtCodiceId.setText(p.getCodiceId());
             txtNome.setText(p.getNome());
@@ -238,8 +239,8 @@ public class ProdottoForm extends JPanel {
             bloccaTuttiICampi();
             
             // Mostro pulsanti di gestione per il Responsabile
-            entity.Utente u = loginCtrl.getUtenteCorrente();
-            if (u instanceof entity.Responsabile) {
+            String ruolo = loginCtrl.getRuoloUtenteCorrente();
+            if ("RESPONSABILE".equals(ruolo)) {
                 btnModifica.setVisible(true);
                 btnSalvaModifiche.setVisible(false); // Nascosto finché non si clicca Modifica
                 btnElimina.setVisible(true);
@@ -347,8 +348,8 @@ public class ProdottoForm extends JPanel {
     private void inserisciProdotto() {
         if (!isDatiValidi()) return;
         try {
-            Prodotto p = creaProdottoDaForm();
-            prodCtrl.inserisciProdotto(p);
+            ProdottoDTO dto = creaProdottoDTODaForm();
+            prodCtrl.inserisciProdottoDaDTO(dto);
             JOptionPane.showMessageDialog(this, "Prodotto inserito con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
             pulisciCampi();
         } catch (NumberFormatException ex) {
@@ -359,12 +360,12 @@ public class ProdottoForm extends JPanel {
     private void modificaProdotto() {
         if (!isDatiValidi()) return;
         try {
-            Prodotto p = creaProdottoDaForm();
-            prodCtrl.salvaModifiche(p);
+            ProdottoDTO dto = creaProdottoDTODaForm();
+            boolean sottoScorta = prodCtrl.salvaModificheDaDTO(dto);
             JOptionPane.showMessageDialog(this, "Prodotto modificato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
             
-            // Aggiorna istantaneamente la spunta in UI ricalcolando il valore dall'entità
-            chkSottoScorta.setSelected(p.isSottoScorta());
+            // Aggiorna istantaneamente la spunta in UI ricalcolando il valore dal Controller
+            chkSottoScorta.setSelected(sottoScorta);
             
             // Ritorna in sola lettura dopo il salvataggio
             bloccaTuttiICampi();
@@ -393,28 +394,28 @@ public class ProdottoForm extends JPanel {
         }
     }
 
-    private Prodotto creaProdottoDaForm() {
-        Prodotto p = new Prodotto();
+    private ProdottoDTO creaProdottoDTODaForm() {
+        ProdottoDTO dto = new ProdottoDTO();
         String codiceId = txtCodiceId.getText().trim();
         if (!codiceId.isEmpty()) {
-            p.setCodiceId(codiceId);
+            dto.setCodiceId(codiceId);
         }
-        p.setNome(txtNome.getText().trim());
-        p.setDescrizione(txtDescrizione.getText().trim());
+        dto.setNome(txtNome.getText().trim());
+        dto.setDescrizione(txtDescrizione.getText().trim());
         
         if (cmbCategoria.getSelectedItem() != null) {
-            p.setCategoria(cmbCategoria.getSelectedItem().toString());
+            dto.setCategoria(cmbCategoria.getSelectedItem().toString());
         }
         
-        p.setScaffale(txtScaffale.getText().trim());
+        dto.setScaffale(txtScaffale.getText().trim());
         
         String soglia = txtSogliaMin.getText().trim();
-        p.setSogliaMinDisponibile(Integer.parseInt(soglia));
+        dto.setSogliaMinDisponibile(Integer.parseInt(soglia));
         
         String qt = txtQuantita.getText().trim();
-        p.setQuantitaDisponibile(Integer.parseInt(qt));
+        dto.setQuantitaDisponibile(Integer.parseInt(qt));
         
-        return p;
+        return dto;
     }
 
     private void pulisciCampi() {
