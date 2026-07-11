@@ -108,6 +108,11 @@ public class MovimentoForm extends JPanel {
             return;
         }
 
+        if (!codiceProdotto.matches("^[a-zA-Z0-9]{6}$")) {
+            JOptionPane.showMessageDialog(this, "Il Codice Prodotto deve essere lungo esattamente 6 caratteri e non contenere caratteri speciali.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         try {
             int quantita = Integer.parseInt(quantitaStr);
 

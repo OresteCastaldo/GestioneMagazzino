@@ -209,6 +209,11 @@ public class ProdottoForm extends JPanel {
             JOptionPane.showMessageDialog(this, "Inserisci un termine per cercare.", "Errore", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
+        if (termine.length() > 50) {
+            JOptionPane.showMessageDialog(this, "L'input di ricerca non può superare i 50 caratteri", "Errore", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         
         // Uso la ricerca flessibile
         Prodotto p = prodCtrl.cercaProdottoFlessibile(termine);
@@ -286,6 +291,39 @@ public class ProdottoForm extends JPanel {
 
     private boolean isDatiValidi() {
         String codiceId = txtCodiceId.getText().trim();
+        String nome = txtNome.getText().trim();
+        String scaffale = txtScaffale.getText().trim();
+        String soglia = txtSogliaMin.getText().trim();
+        String quantita = txtQuantita.getText().trim();
+
+        if (nome.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Il nome del prodotto è obbligatorio e non può essere lasciato vuoto", "Errore", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (!codiceId.matches("^[a-zA-Z0-9]{6}$")) {
+            JOptionPane.showMessageDialog(this, "Il Codice Prodotto deve essere lungo esattamente 6 caratteri e non contenere caratteri speciali.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (!scaffale.matches("^[a-zA-Z0-9]+$")) {
+            JOptionPane.showMessageDialog(this, "Lo scaffale può contenere solo caratteri alfanumerici e nessun simbolo speciale.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (soglia.isEmpty() || quantita.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "I campi Quantità e Soglia Minima sono obbligatori e devono contenere un numero valido.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        try {
+            Integer.parseInt(soglia);
+            Integer.parseInt(quantita);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "I campi Quantità e Soglia Minima sono obbligatori e devono contenere un numero valido.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
         boolean isInserimento = "INSERIMENTO".equals(modalita);
         String categoria = (cmbCategoria.getSelectedItem() != null) ? cmbCategoria.getSelectedItem().toString() : "";
         
@@ -371,10 +409,10 @@ public class ProdottoForm extends JPanel {
         p.setScaffale(txtScaffale.getText().trim());
         
         String soglia = txtSogliaMin.getText().trim();
-        p.setSogliaMinDisponibile(soglia.isEmpty() ? 0 : Integer.parseInt(soglia));
+        p.setSogliaMinDisponibile(Integer.parseInt(soglia));
         
         String qt = txtQuantita.getText().trim();
-        p.setQuantitaDisponibile(qt.isEmpty() ? 0 : Integer.parseInt(qt));
+        p.setQuantitaDisponibile(Integer.parseInt(qt));
         
         return p;
     }

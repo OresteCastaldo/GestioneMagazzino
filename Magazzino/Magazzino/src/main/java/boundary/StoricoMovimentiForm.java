@@ -154,6 +154,11 @@ public class StoricoMovimentiForm extends JPanel {
             return;
         }
 
+        if (termine.length() > 50) {
+            JOptionPane.showMessageDialog(this, "La lunghezza del termine di ricerca non può superare i 50 caratteri.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         // Pulisci la tabella
         tableModel.setRowCount(0);
 
@@ -187,6 +192,23 @@ public class StoricoMovimentiForm extends JPanel {
         String dataInizioStr = txtDataInizio.getText().trim();
         String dataFineStr = txtDataFine.getText().trim();
         String tipoMovimento = (String) cmbTipoMovimento.getSelectedItem();
+
+        if (!dataInizioStr.isEmpty() && !dataFineStr.isEmpty()) {
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                sdf.setLenient(false);
+                java.util.Date dataInizio = sdf.parse(dataInizioStr);
+                java.util.Date dataFine = sdf.parse(dataFineStr);
+                
+                if (dataFine.before(dataInizio)) {
+                    JOptionPane.showMessageDialog(this, "La data di fine non può essere precedente a quella di inizio.", "Errore", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (java.text.ParseException e) {
+                // Il controller gestirà l'eccezione lanciando un IllegalArgumentException 
+                // in caso di formato invalido, che verrà mostrata nel blocco catch sottostante
+            }
+        }
 
         try {
             List<Movimento> movimenti = movCtrl.getStoricoConFiltri(

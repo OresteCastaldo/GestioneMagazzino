@@ -25,8 +25,8 @@
                       value="jdbc:mysql://127.0.0.1:3306/magazzino_db"/>
 
             <property name="jakarta.persistence.jdbc.user"
-                      value="admin"/>
-
+                      value="root"/>
+<!--RICORDA UTENTE CAMBIATO DA admin a root-->
             <property name="jakarta.persistence.jdbc.password"
                       value="dueuno21"/>
 

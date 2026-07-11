@@ -33,6 +33,20 @@ public class MovimentoController {
      * @param movimento il movimento da registrare
      */
     public boolean registraMovimento(Movimento movimento) throws IllegalArgumentException {
+        String codice = movimento.getProdottoId();
+        
+        if (codice == null || codice.length() != 6) {
+            throw new IllegalArgumentException("Formato codice non corretto: deve essere di 6 caratteri");
+        }
+        
+        if (!codice.matches("^[a-zA-Z0-9]+$")) {
+            throw new IllegalArgumentException("Il codice prodotto può contenere solo caratteri alfanumerici");
+        }
+        
+        if (movimento.getQuantita() <= 0) {
+            throw new IllegalArgumentException("La quantità del movimento deve essere maggiore di zero");
+        }
+
         boolean sottoScortaTriggered = false;
         String prodottoId = movimento.getProdottoId();
         if (prodottoId != null) {
