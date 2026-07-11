@@ -11,16 +11,18 @@ public class OperatoreDTO {
     private String nome;
     private String cognome;
     private String email;
+    private String password;
     private String ruolo;
 
     public OperatoreDTO() {
     }
 
-    public OperatoreDTO(Long idUtente, String nome, String cognome, String email, String ruolo) {
+    public OperatoreDTO(Long idUtente, String nome, String cognome, String email, String password, String ruolo) {
         this.idUtente = idUtente;
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
+        this.password = password;
         this.ruolo = ruolo;
     }
 
@@ -56,6 +58,14 @@ public class OperatoreDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getRuolo() {

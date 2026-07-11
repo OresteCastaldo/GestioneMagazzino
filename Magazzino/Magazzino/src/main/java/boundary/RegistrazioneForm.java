@@ -1,9 +1,8 @@
 package boundary;
 
 import controller.RegistrationController;
-import entity.Operatore;
-import entity.Responsabile;
-import entity.Utente;
+import dto.OperatoreDTO;
+import dto.ResponsabileDTO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -134,20 +133,25 @@ public class RegistrazioneForm extends JPanel {
             return;
         }
 
-        Utente utente;
-        if ("OPERATORE".equals(tipo)) {
-            utente = new Operatore();
-        } else {
-            utente = new Responsabile();
-        }
-        utente.setNome(nome);
-        utente.setCognome(cognome);
-        utente.setEmail(email);
-        utente.setPassword(password);
-        utente.setRuolo(tipo);
-
         try {
-            regCtrl.registraNuovoUtente(utente);
+            if ("OPERATORE".equals(tipo)) {
+                OperatoreDTO dto = new OperatoreDTO();
+                dto.setNome(nome);
+                dto.setCognome(cognome);
+                dto.setEmail(email);
+                dto.setPassword(password);
+                dto.setRuolo(tipo);
+                regCtrl.registraNuovoOperatore(dto);
+            } else {
+                ResponsabileDTO dto = new ResponsabileDTO();
+                dto.setNome(nome);
+                dto.setCognome(cognome);
+                dto.setEmail(email);
+                dto.setPassword(password);
+                dto.setRuolo(tipo);
+                regCtrl.registraNuovoResponsabile(dto);
+            }
+
             JOptionPane.showMessageDialog(this, "Registrazione avvenuta con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
 
             // Pulisci i campi

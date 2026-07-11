@@ -1,6 +1,10 @@
 package controller;
 
 import database.UtenteDAO;
+import dto.OperatoreDTO;
+import dto.ResponsabileDTO;
+import entity.Operatore;
+import entity.Responsabile;
 import entity.Utente;
 
 /**
@@ -18,12 +22,47 @@ public class RegistrationController {
     }
 
     /**
+     * Registra un nuovo operatore a partire dal suo DTO.
+     * Mappa i dati sull'entità concreta e delega il salvataggio.
+     * @param dto i dati dell'operatore provenienti dalla GUI
+     * @return true se la registrazione ha successo
+     * @throws Exception in caso di validazione fallita
+     */
+    public boolean registraNuovoOperatore(OperatoreDTO dto) throws Exception {
+        Operatore op = new Operatore();
+        op.setNome(dto.getNome());
+        op.setCognome(dto.getCognome());
+        op.setEmail(dto.getEmail());
+        op.setPassword(dto.getPassword());
+        op.setRuolo("OPERATORE");
+        return registraNuovoUtente(op);
+    }
+
+    /**
+     * Registra un nuovo responsabile a partire dal suo DTO.
+     * Mappa i dati sull'entità concreta e delega il salvataggio.
+     * @param dto i dati del responsabile provenienti dalla GUI
+     * @return true se la registrazione ha successo
+     * @throws Exception in caso di validazione fallita
+     */
+    public boolean registraNuovoResponsabile(ResponsabileDTO dto) throws Exception {
+        Responsabile resp = new Responsabile();
+        resp.setNome(dto.getNome());
+        resp.setCognome(dto.getCognome());
+        resp.setEmail(dto.getEmail());
+        resp.setPassword(dto.getPassword());
+        resp.setRuolo("RESPONSABILE");
+        return registraNuovoUtente(resp);
+    }
+
+    /**
      * Valida i dati e registra un nuovo utente nel sistema tramite Hibernate.
+     * Reso privato per nascondere le entità al livello Boundary.
      * @param utente l'utente da registrare (Operatore o Responsabile)
      * @return true se la registrazione è andata a buon fine
      * @throws Exception se la validazione fallisce o l'utente risulta già registrato
      */
-    public boolean registraNuovoUtente(Utente utente) throws Exception {
+    private boolean registraNuovoUtente(Utente utente) throws Exception {
         // Validazione dati
         if (utente == null || utente.getEmail() == null || utente.getEmail().trim().isEmpty()) {
             throw new Exception("Dati utente non validi.");
