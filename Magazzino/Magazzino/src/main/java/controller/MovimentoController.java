@@ -116,17 +116,12 @@ public class MovimentoController {
      * @return la lista aggregata di tutti i movimenti trovati
      */
     public List<Movimento> getMovimentiFiltratiFlessibili(String termine) {
-        List<Prodotto> prodotti = prodottoDAO.ricercaMultiplaFlessibile(termine);
-        List<Movimento> risultati = new ArrayList<>();
-        if (prodotti != null) {
-            for (Prodotto p : prodotti) {
-                List<Movimento> movs = getMovimentiFiltrati(p.getCodiceId());
-                if (movs != null) {
-                    risultati.addAll(movs);
-                }
-            }
-        }
-        return risultati;
+        // La ricerca flessibile restituisce al massimo un Prodotto.
+        Prodotto p = prodottoDAO.ricercaFlessibile(termine);
+        if (p == null) return new ArrayList<>();
+
+        List<Movimento> movs = getMovimentiFiltrati(p.getCodiceId());
+        return movs != null ? movs : new ArrayList<>();
     }
 
     /**

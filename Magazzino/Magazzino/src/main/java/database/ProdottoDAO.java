@@ -117,4 +117,13 @@ public class ProdottoDAO {
             em.close();
         }
     }
+
+    public List<Prodotto> trovaTutti() {
+        EntityManager em = JpaUtil.getInstance().getEntityManager();
+        try {
+            return em.createQuery("SELECT p FROM Prodotto p", Prodotto.class).getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }
