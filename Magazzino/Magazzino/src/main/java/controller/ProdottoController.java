@@ -11,7 +11,6 @@ import java.util.Random;
  * Controller dedicato alla gestione completa del ciclo di vita dei prodotti.
  * Ispirato alla struttura di IDS_Magazzino.ProdottoController,
  * adattato allo stack Hibernate/JPA del progetto.
- *
  * Unifica la logica precedentemente distribuita tra CatalogoProdotto
  * e la parte prodotti di GestoreMagazzino.
  */
