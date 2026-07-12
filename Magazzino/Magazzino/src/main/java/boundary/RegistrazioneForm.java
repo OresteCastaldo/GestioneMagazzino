@@ -133,6 +133,11 @@ public class RegistrazioneForm extends JPanel {
             return;
         }
 
+        if (!email.contains("@") || !email.contains(".")) {
+            JOptionPane.showMessageDialog(this, "Inserire un indirizzo email valido.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         try {
             if ("OPERATORE".equals(tipo)) {
                 OperatoreDTO dto = new OperatoreDTO();

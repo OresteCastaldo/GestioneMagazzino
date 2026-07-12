@@ -23,12 +23,4 @@ public class Operatore extends Utente {
         super();
         this.movimentiCreati = new ArrayList<>();
     }
-
-    public List<Movimento> getMovimentiCreati() {
-        return movimentiCreati;
-    }
-
-    public void setMovimentiCreati(List<Movimento> movimentiCreati) {
-        this.movimentiCreati = movimentiCreati;
-    }
 }

@@ -194,26 +194,31 @@ public class StoricoMovimentiForm extends JPanel {
         String dataFineStr = txtDataFine.getText().trim();
         String tipoMovimento = (String) cmbTipoMovimento.getSelectedItem();
 
-        if (!dataInizioStr.isEmpty() && !dataFineStr.isEmpty()) {
-            try {
-                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-                sdf.setLenient(false);
-                java.util.Date dataInizio = sdf.parse(dataInizioStr);
-                java.util.Date dataFine = sdf.parse(dataFineStr);
-                
-                if (dataFine.before(dataInizio)) {
-                    JOptionPane.showMessageDialog(this, "La data di fine non può essere precedente a quella di inizio.", "Errore", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            } catch (java.text.ParseException e) {
-                // Il controller gestirà l'eccezione lanciando un IllegalArgumentException 
-                // in caso di formato invalido, che verrà mostrata nel blocco catch sottostante
+        java.util.Date dataInizio = null;
+        java.util.Date dataFine = null;
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        sdf.setLenient(false);
+
+        try {
+            if (!dataInizioStr.isEmpty()) {
+                dataInizio = sdf.parse(dataInizioStr);
             }
+            if (!dataFineStr.isEmpty()) {
+                dataFine = sdf.parse(dataFineStr);
+            }
+            
+            if (dataInizio != null && dataFine != null && dataFine.before(dataInizio)) {
+                JOptionPane.showMessageDialog(this, "La data di fine non può essere precedente a quella di inizio.", "Errore", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (java.text.ParseException e) {
+            JOptionPane.showMessageDialog(this, "Formato Data non valido. Usa il formato gg/MM/aaaa.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         try {
             List<MovimentoDTO> movimenti = movCtrl.getStoricoConFiltriDTO(
-                    codiceProdottoCorrente, dataInizioStr, dataFineStr, tipoMovimento);
+                    codiceProdottoCorrente, dataInizio, dataFine, tipoMovimento);
 
             tableModel.setRowCount(0);
 
@@ -226,8 +231,8 @@ public class StoricoMovimentiForm extends JPanel {
 
             popolaTabella(movimenti);
 
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Errore Formato Data", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Errore durante la ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
 

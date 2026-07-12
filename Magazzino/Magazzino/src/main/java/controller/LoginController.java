@@ -24,12 +24,6 @@ public class LoginController {
      * @return true se l'utente è stato trovato e la password corrisponde
      */
     public boolean effettuaLogin(String email, String password) {
-        if (email == null || email.trim().isEmpty()) {
-            return false;
-        }
-        if (password == null || password.trim().isEmpty()) {
-            return false;
-        }
         Utente u = utenteDAO.trovaPerEmailEPassword(email.trim(), password.trim());
         if (u != null) {
             this.utenteCorrente = u;
@@ -37,15 +31,6 @@ public class LoginController {
         }
         return false;
     }
-
-    /**
-     * Restituisce l'utente attualmente loggato nel sistema.
-     * @return l'utente corrente, o null se nessuno è loggato
-     */
-    public Utente getUtenteCorrente() {
-        return utenteCorrente;
-    }
-
     /**
      * Restituisce il ruolo dell'utente corrente come stringa.
      * Nasconde internamente il controllo instanceof alla Boundary.
@@ -59,9 +44,10 @@ public class LoginController {
     }
 
     /**
-     * Esegue il logout resettando l'utente corrente.
+     * Restituisce l'email dell'utente corrente o null se nessuno è loggato.
      */
-    public void logout() {
-        this.utenteCorrente = null;
+    public String getEmailUtenteCorrente() {
+        if (utenteCorrente == null) return null;
+        return utenteCorrente.getEmail();
     }
 }

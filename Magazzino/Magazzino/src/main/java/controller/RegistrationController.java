@@ -63,20 +63,6 @@ public class RegistrationController {
      * @throws Exception se la validazione fallisce o l'utente risulta già registrato
      */
     private boolean registraNuovoUtente(Utente utente) throws Exception {
-        // Validazione dati
-        if (utente == null || utente.getEmail() == null || utente.getEmail().trim().isEmpty()) {
-            throw new Exception("Dati utente non validi.");
-        }
-        if (utente.getNome() == null || utente.getNome().trim().isEmpty()) {
-            throw new Exception("Il nome non può essere vuoto.");
-        }
-        if (utente.getCognome() == null || utente.getCognome().trim().isEmpty()) {
-            throw new Exception("Il cognome non può essere vuoto.");
-        }
-        if (utente.getPassword() == null || utente.getPassword().trim().isEmpty()) {
-            throw new Exception("La password non può essere vuota.");
-        }
-
         // Verifica email duplicata
         if (utenteDAO.trovaPerEmail(utente.getEmail().trim()) != null) {
             throw new Exception("Questa email è già associata ad un utente registrato.");

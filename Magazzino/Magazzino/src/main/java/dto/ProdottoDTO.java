@@ -19,12 +19,6 @@ public class ProdottoDTO {
     public ProdottoDTO() {
     }
 
-    public ProdottoDTO(String codiceId, String nome, int quantitaDisponibile) {
-        this.codiceId = codiceId;
-        this.nome = nome;
-        this.quantitaDisponibile = quantitaDisponibile;
-    }
-
     public ProdottoDTO(String codiceId, String nome, String descrizione, String categoria,
                        String scaffale, int sogliaMinDisponibile, int quantitaDisponibile, boolean sottoScorta) {
         this.codiceId = codiceId;

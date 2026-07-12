@@ -5,6 +5,7 @@ package dto;
  * dal livello Boundary al livello Controller e viceversa.
  * Non contiene alcuna dipendenza dal livello Entity o Database.
  */
+
 public class MovimentoDTO {
 
     private Long id;

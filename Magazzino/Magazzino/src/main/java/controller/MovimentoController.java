@@ -35,19 +35,6 @@ public class MovimentoController {
      * @param movimento il movimento da registrare
      */
     public boolean registraMovimento(Movimento movimento) throws IllegalArgumentException {
-        String codice = movimento.getProdottoId();
-        
-        if (codice == null || codice.length() != 6) {
-            throw new IllegalArgumentException("Formato codice non corretto: deve essere di 6 caratteri");
-        }
-        
-        if (!codice.matches("^[a-zA-Z0-9]+$")) {
-            throw new IllegalArgumentException("Il codice prodotto può contenere solo caratteri alfanumerici");
-        }
-        
-        if (movimento.getQuantita() <= 0) {
-            throw new IllegalArgumentException("La quantità del movimento deve essere maggiore di zero");
-        }
 
         boolean sottoScortaTriggered = false;
         String prodottoId = movimento.getProdottoId();
@@ -90,22 +77,25 @@ public class MovimentoController {
      * @throws IllegalArgumentException se il prodotto non viene trovato o i dati non sono validi
      */
     public boolean registraMovimentoDaDTO(MovimentoDTO dto) throws IllegalArgumentException {
-        // a. Verifica l'esistenza del prodotto tramite il codice nel DTO
-        Prodotto prodotto = prodottoDAO.trovaPerId(dto.getCodiceProdotto());
+        // La validazione sintattica del DTO è ora interamente delegata alla Boundary.
+        String codice = dto.getCodiceProdotto();
+
+        // b. Verifica l'esistenza del prodotto tramite il codice nel DTO
+        Prodotto prodotto = prodottoDAO.trovaPerId(codice);
         if (prodotto == null) {
-            throw new IllegalArgumentException("Prodotto non trovato con codice: " + dto.getCodiceProdotto());
+            throw new IllegalArgumentException("Prodotto non trovato con codice: " + codice);
         }
 
-        // b. Crea una nuova istanza dell'Entity Movimento
+        // c. Crea una nuova istanza dell'Entity Movimento
         Movimento movimento = new Movimento();
 
-        // c. Popola l'Entity con i dati del DTO
+        // d. Popola l'Entity con i dati del DTO
         movimento.setQuantita(dto.getQuantita());
         movimento.setTipologia(dto.getTipologia());
         movimento.setData(new Date());
         movimento.setProdottoId(prodotto.getCodiceId());
 
-        // d. Delega al metodo standard di registrazione e restituisce il risultato
+        // e. Delega al metodo standard di registrazione e restituisce il risultato
         return registraMovimento(movimento);
     }
 
@@ -115,15 +105,8 @@ public class MovimentoController {
      * @return la lista dei movimenti associati al prodotto
      */
     public List<Movimento> getMovimentiFiltrati(String prodottoId) {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            return em.createQuery(
-                "SELECT m FROM Movimento m WHERE m.prodotto.codiceId = :prodottoId", Movimento.class)
-                .setParameter("prodottoId", prodottoId)
-                .getResultList();
-        } finally {
-            em.close();
-        }
+        // Delega la lettura al DAO per separare le responsabilità
+        return movimentoDAO.getMovimentiFiltrati(prodottoId);
     }
 
     /**
@@ -161,50 +144,34 @@ public class MovimentoController {
      * Restituisce i movimenti per un prodotto con filtri opzionali.
      * Gestisce la conversione sicura delle date da stringa (formato gg/MM/yyyy).
      * @param codiceProdotto ID del prodotto (obbligatorio)
-     * @param dataInizioStr data inizio come stringa gg/MM/yyyy (opzionale)
-     * @param dataFineStr data fine come stringa gg/MM/yyyy (opzionale)
+     * //@param dataInizioStr data inizio come stringa gg/MM/yyyy (opzionale)
+     * //@param dataFineStr data fine come stringa gg/MM/yyyy (opzionale)
      * @param tipoMovimento tipo CARICO/SCARICO (opzionale, null/"Tutti" = tutti)
      * @return la lista dei movimenti che soddisfano i criteri
      * @throws IllegalArgumentException se una data inserita ha un formato non valido
      */
-    public List<Movimento> getStoricoConFiltri(String codiceProdotto, String dataInizioStr,
-            String dataFineStr, String tipoMovimento) throws IllegalArgumentException {
+    public List<Movimento> getStoricoConFiltri(String codiceProdotto, java.util.Date dataInizio,
+            java.util.Date dataFine, String tipoMovimento) {
 
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-        sdf.setLenient(false);
-
-        java.util.Date dataInizio = null;
-        java.util.Date dataFine = null;
-
-        if (dataInizioStr != null && !dataInizioStr.trim().isEmpty()) {
-            try {
-                dataInizio = sdf.parse(dataInizioStr.trim());
-                // Forza l'orario alle 00:00:00 per includere l'intero giorno di inizio
-                java.util.Calendar calInizio = java.util.Calendar.getInstance();
-                calInizio.setTime(dataInizio);
-                calInizio.set(java.util.Calendar.HOUR_OF_DAY, 0);
-                calInizio.set(java.util.Calendar.MINUTE, 0);
-                calInizio.set(java.util.Calendar.SECOND, 0);
-                calInizio.set(java.util.Calendar.MILLISECOND, 0);
-                dataInizio = calInizio.getTime();
-            } catch (java.text.ParseException e) {
-                throw new IllegalArgumentException("Formato Data Inizio non valido. Usa il formato gg/MM/aaaa.");
-            }
+        if (dataInizio != null) {
+            // Forza l'orario alle 00:00:00 per includere l'intero giorno di inizio
+            java.util.Calendar calInizio = java.util.Calendar.getInstance();
+            calInizio.setTime(dataInizio);
+            calInizio.set(java.util.Calendar.HOUR_OF_DAY, 0);
+            calInizio.set(java.util.Calendar.MINUTE, 0);
+            calInizio.set(java.util.Calendar.SECOND, 0);
+            calInizio.set(java.util.Calendar.MILLISECOND, 0);
+            dataInizio = calInizio.getTime();
         }
 
-        if (dataFineStr != null && !dataFineStr.trim().isEmpty()) {
-            try {
-                dataFine = sdf.parse(dataFineStr.trim());
-                // Imposta la data fine alla fine della giornata (23:59:59)
-                java.util.Calendar cal = java.util.Calendar.getInstance();
-                cal.setTime(dataFine);
-                cal.set(java.util.Calendar.HOUR_OF_DAY, 23);
-                cal.set(java.util.Calendar.MINUTE, 59);
-                cal.set(java.util.Calendar.SECOND, 59);
-                dataFine = cal.getTime();
-            } catch (java.text.ParseException e) {
-                throw new IllegalArgumentException("Formato Data Fine non valido. Usa il formato gg/MM/aaaa.");
-            }
+        if (dataFine != null) {
+            // Imposta la data fine alla fine della giornata (23:59:59)
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTime(dataFine);
+            cal.set(java.util.Calendar.HOUR_OF_DAY, 23);
+            cal.set(java.util.Calendar.MINUTE, 59);
+            cal.set(java.util.Calendar.SECOND, 59);
+            dataFine = cal.getTime();
         }
 
         // Se il tipo è "Tutti" o vuoto, passa null al DAO
@@ -220,15 +187,15 @@ public class MovimentoController {
      * Versione DTO di getStoricoConFiltri per il livello Boundary.
      * La conversione Entity→DTO avviene interamente qui, nel Controller.
      * @param codiceProdotto ID del prodotto (obbligatorio)
-     * @param dataInizioStr data inizio gg/MM/yyyy (opzionale)
-     * @param dataFineStr data fine gg/MM/yyyy (opzionale)
+     // @param dataInizioStr data inizio gg/MM/yyyy (opzionale)
+     // @param dataFineStr data fine gg/MM/yyyy (opzionale)
      * @param tipoMovimento CARICO/SCARICO/Tutti (opzionale)
      * @return la lista di MovimentoDTO che soddisfano i criteri
      * @throws IllegalArgumentException se una data ha formato non valido
      */
-    public List<MovimentoDTO> getStoricoConFiltriDTO(String codiceProdotto, String dataInizioStr,
-            String dataFineStr, String tipoMovimento) throws IllegalArgumentException {
-        List<Movimento> entita = getStoricoConFiltri(codiceProdotto, dataInizioStr, dataFineStr, tipoMovimento);
+    public List<MovimentoDTO> getStoricoConFiltriDTO(String codiceProdotto, java.util.Date dataInizio,
+            java.util.Date dataFine, String tipoMovimento) {
+        List<Movimento> entita = getStoricoConFiltri(codiceProdotto, dataInizio, dataFine, tipoMovimento);
         return convertiInDTO(entita);
     }
 

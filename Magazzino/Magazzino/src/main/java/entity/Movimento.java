@@ -41,6 +41,8 @@ public class Movimento {
     public Movimento() {
     }
 
+    //  Get e Set
+
     public Long getId() {
         return id;
     }
@@ -79,14 +81,6 @@ public class Movimento {
 
     public void setProdotto(Prodotto prodotto) {
         this.prodotto = prodotto;
-    }
-
-    public Operatore getOperatore() {
-        return operatore;
-    }
-
-    public void setOperatore(Operatore operatore) {
-        this.operatore = operatore;
     }
 
     // --- Metodi di retrocompatibilità per il layer Boundary ---

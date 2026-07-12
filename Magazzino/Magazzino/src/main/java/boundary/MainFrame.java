@@ -75,11 +75,12 @@ public class MainFrame extends JFrame {
     /**
      * Aggiorna l'intestazione con i dati dell'utente loggato.
      */
+
     public void aggiornaIntestazione() {
-        entity.Utente u = loginCtrl.getUtenteCorrente();
-        if (u != null) {
-            String ruolo = (u instanceof entity.Operatore) ? "OPERATORE" : "RESPONSABILE";
-            lblIntestazione.setText("Utente loggato: " + ruolo + " - " + u.getEmail());
+        String ruolo = loginCtrl.getRuoloUtenteCorrente();
+        String email = loginCtrl.getEmailUtenteCorrente();
+        if (email != null) {
+            lblIntestazione.setText("Utente loggato: " + ruolo + " - " + email);
             lblIntestazione.setVisible(true);
         } else {
             lblIntestazione.setVisible(false);

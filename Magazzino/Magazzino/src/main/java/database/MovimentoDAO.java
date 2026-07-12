@@ -26,24 +26,6 @@ public class MovimentoDAO {
         }
     }
 
-    public Movimento trovaPerId(Long id) {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            return em.find(Movimento.class, id);
-        } finally {
-            em.close();
-        }
-    }
-
-    public List<Movimento> trovaTutti() {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            return em.createQuery("SELECT m FROM Movimento m", Movimento.class).getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
     public void eliminaMovimentiPerProdotto(String prodottoId, EntityManager em) {
         em.createQuery("DELETE FROM Movimento m WHERE m.prodotto.codiceId = :id")
           .setParameter("id", prodottoId)
@@ -90,6 +72,22 @@ public class MovimentoDAO {
             }
 
             return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Restituisce i movimenti associati a un prodotto.
+     * Sposta qui la responsabilità della query dal Controller al DAO.
+     */
+    public List<Movimento> getMovimentiFiltrati(String prodottoId) {
+        EntityManager em = JpaUtil.getInstance().getEntityManager();
+        try {
+            return em.createQuery(
+                "SELECT m FROM Movimento m WHERE m.prodotto.codiceId = :prodottoId", Movimento.class)
+                .setParameter("prodottoId", prodottoId)
+                .getResultList();
         } finally {
             em.close();
         }

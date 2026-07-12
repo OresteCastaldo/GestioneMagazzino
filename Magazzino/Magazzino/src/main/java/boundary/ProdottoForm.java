@@ -293,12 +293,14 @@ public class ProdottoForm extends JPanel {
     private boolean isDatiValidi() {
         String codiceId = txtCodiceId.getText().trim();
         String nome = txtNome.getText().trim();
+        String descrizione = txtDescrizione.getText().trim();
         String scaffale = txtScaffale.getText().trim();
-        String soglia = txtSogliaMin.getText().trim();
-        String quantita = txtQuantita.getText().trim();
+        String sogliaStr = txtSogliaMin.getText().trim();
+        String quantitaStr = txtQuantita.getText().trim();
+        String categoria = (cmbCategoria.getSelectedItem() != null) ? cmbCategoria.getSelectedItem().toString() : "";
 
-        if (nome.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Il nome del prodotto è obbligatorio e non può essere lasciato vuoto", "Errore", JOptionPane.ERROR_MESSAGE);
+        if (codiceId.isEmpty() || nome.isEmpty() || scaffale.isEmpty() || sogliaStr.isEmpty() || quantitaStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tutti i campi (tranne descrizione) sono obbligatori.", "Errore", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -307,37 +309,48 @@ public class ProdottoForm extends JPanel {
             return false;
         }
 
-        if (!scaffale.matches("^[a-zA-Z0-9]+$")) {
-            JOptionPane.showMessageDialog(this, "Lo scaffale può contenere solo caratteri alfanumerici e nessun simbolo speciale.", "Errore", JOptionPane.ERROR_MESSAGE);
+        if (nome.length() > 50) {
+            JOptionPane.showMessageDialog(this, "Il nome non può superare i 50 caratteri.", "Errore", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
-        if (soglia.isEmpty() || quantita.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "I campi Quantità e Soglia Minima sono obbligatori e devono contenere un numero valido.", "Errore", JOptionPane.ERROR_MESSAGE);
+        if (!scaffale.matches("^[a-zA-Z0-9]+$") || scaffale.length() > 6) {
+            JOptionPane.showMessageDialog(this, "Lo scaffale può contenere solo fino a 6 caratteri alfanumerici.", "Errore", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
+        if (descrizione.length() > 500) {
+            JOptionPane.showMessageDialog(this, "La descrizione non può superare i 500 caratteri.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (categoria.isEmpty() || categoria.equals("Seleziona...")) {
+            JOptionPane.showMessageDialog(this, "Selezionare una Categoria.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        java.util.List<String> categorieValide = java.util.Arrays.asList("Frutta", "Verdura", "Carne", "Bevande", "Surgelati");
+        if (!categorieValide.contains(categoria)) {
+            JOptionPane.showMessageDialog(this, "Categoria selezionata non valida.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        int soglia, quantita;
         try {
-            Integer.parseInt(soglia);
-            Integer.parseInt(quantita);
+            soglia = Integer.parseInt(sogliaStr);
+            quantita = Integer.parseInt(quantitaStr);
+            if (soglia < 0 || quantita < 0) {
+                JOptionPane.showMessageDialog(this, "Soglia Minima e Quantità non possono essere negative.", "Errore", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "I campi Quantità e Soglia Minima sono obbligatori e devono contenere un numero valido.", "Errore", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "I campi Quantità e Soglia Minima devono contenere un numero intero valido.", "Errore", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
         boolean isInserimento = "INSERIMENTO".equals(modalita);
-        String categoria = (cmbCategoria.getSelectedItem() != null) ? cmbCategoria.getSelectedItem().toString() : "";
+        ProdottoDTO dto = creaProdottoDTODaForm();
         
-        String errore = prodCtrl.validaDatiProdotto(
-            codiceId, 
-            txtNome.getText(), 
-            txtDescrizione.getText(), 
-            categoria, 
-            txtScaffale.getText(), 
-            txtSogliaMin.getText(), 
-            txtQuantita.getText(),
-            isInserimento
-        );
+        String errore = prodCtrl.validaRegoleBusinessProdotto(dto, isInserimento);
         if (errore != null) {
             JOptionPane.showMessageDialog(this, errore, "Errore di Validazione", JOptionPane.ERROR_MESSAGE);
             return false;

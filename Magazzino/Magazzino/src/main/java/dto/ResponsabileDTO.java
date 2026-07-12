@@ -17,16 +17,7 @@ public class ResponsabileDTO {
     public ResponsabileDTO() {
     }
 
-    public ResponsabileDTO(Long idUtente, String nome, String cognome, String email, String password, String ruolo) {
-        this.idUtente = idUtente;
-        this.nome = nome;
-        this.cognome = cognome;
-        this.email = email;
-        this.password = password;
-        this.ruolo = ruolo;
-    }
-
-    // --- Getters e Setters ---
+    // Get e Set
 
     public Long getIdUtente() {
         return idUtente;

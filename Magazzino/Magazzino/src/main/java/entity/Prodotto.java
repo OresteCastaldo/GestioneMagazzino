@@ -44,12 +44,7 @@ public class Prodotto {
         this.movimenti = new ArrayList<>();
     }
 
-    // Metodo descritto nel PlantUML
-    public int getQuantitaProdotto() {
-        return quantitaDisponibile;
-    }
-
-    // --- Getters and Setters standard ---
+    //  Get e Set
 
     public String getCodiceId() {
         return codiceId;
@@ -113,14 +108,6 @@ public class Prodotto {
 
     public void setSottoScorta(boolean sottoScorta) {
         this.sottoScorta = sottoScorta;
-    }
-
-    public List<Movimento> getMovimenti() {
-        return movimenti;
-    }
-
-    public void setMovimenti(List<Movimento> movimenti) {
-        this.movimenti = movimenti;
     }
 
 }

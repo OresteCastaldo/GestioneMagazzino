@@ -44,8 +44,8 @@ public class DashboardForm extends JPanel {
         gbc.gridy = 0;
         add(lblTitolo, gbc);
 
-        entity.Utente u = loginCtrl.getUtenteCorrente();
-        boolean isOperatore = (u instanceof entity.Operatore);
+        String ruolo = loginCtrl.getRuoloUtenteCorrente();
+        boolean isOperatore = "OPERATORE".equals(ruolo);
 
         if (isOperatore) {
             JButton btnMovimento = new JButton("Registra Movimento");

@@ -17,15 +17,6 @@ public class OperatoreDTO {
     public OperatoreDTO() {
     }
 
-    public OperatoreDTO(Long idUtente, String nome, String cognome, String email, String password, String ruolo) {
-        this.idUtente = idUtente;
-        this.nome = nome;
-        this.cognome = cognome;
-        this.email = email;
-        this.password = password;
-        this.ruolo = ruolo;
-    }
-
     // --- Getters e Setters ---
 
     public Long getIdUtente() {
