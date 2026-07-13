@@ -83,6 +83,14 @@ public class Movimento {
         this.prodotto = prodotto;
     }
 
+    public Operatore getOperatore() {
+        return operatore;
+    }
+
+    public void setOperatore(Operatore operatore) {
+        this.operatore = operatore;
+    }
+
     // --- Metodi di retrocompatibilità per il layer Boundary ---
 
     public String getProdottoId() {

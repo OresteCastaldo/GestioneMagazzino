@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
         DashboardForm dashboardForm = new DashboardForm(loginCtrl, this);
         ProdottoForm prodottoForm = new ProdottoForm(loginCtrl, prodCtrl, this);
         GestioneProdottoMenu gestioneProdottoMenu = new GestioneProdottoMenu(this);
-        MovimentoForm movimentoForm = new MovimentoForm(movCtrl, this);
+        MovimentoForm movimentoForm = new MovimentoForm(movCtrl, loginCtrl, this);
         StoricoMovimentiForm storicoForm = new StoricoMovimentiForm(movCtrl, this);
 
         setLayout(new BorderLayout());

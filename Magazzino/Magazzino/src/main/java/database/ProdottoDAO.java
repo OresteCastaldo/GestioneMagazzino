@@ -88,12 +88,8 @@ public class ProdottoDAO {
         EntityManager em = JpaUtil.getInstance().getEntityManager();
         try {
             em.getTransaction().begin();
-            
-            // 1. Elimina preventivamente i movimenti correlati nella STESSA transazione
-            MovimentoDAO movimentoDAO = new MovimentoDAO();
-            movimentoDAO.eliminaMovimentiPerProdotto(codiceId, em);
-            
-            // 2. Elimina il prodotto
+
+            // 1. Elimina il prodotto
             Prodotto prodotto = em.find(Prodotto.class, codiceId);
             if (prodotto != null) {
                 em.remove(prodotto);

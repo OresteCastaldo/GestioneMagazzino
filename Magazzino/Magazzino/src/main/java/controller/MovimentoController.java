@@ -2,10 +2,13 @@ package controller;
 
 import database.MovimentoDAO;
 import database.ProdottoDAO;
+import database.UtenteDAO;
 import database.JpaUtil;
 import dto.MovimentoDTO;
 import entity.Movimento;
 import entity.Prodotto;
+import entity.Utente;
+import entity.Operatore;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Date;
@@ -95,6 +98,34 @@ public class MovimentoController {
         movimento.setData(new Date());
         movimento.setProdottoId(prodotto.getCodiceId());
 
+        // f. Risolve obbligatoriamente l'operatore corrente (l'applicazione richiede che un Operatore registri il movimento)
+        String emailOperatore = dto.getEmailOperatore();
+        if (emailOperatore == null || emailOperatore.trim().isEmpty()) {
+            throw new IllegalArgumentException("Operatore non autenticato: email mancante.");
+        }
+
+        UtenteDAO utenteDAO = new UtenteDAO();
+        Utente u = utenteDAO.trovaPerEmail(emailOperatore);
+        if (u == null) {
+            throw new IllegalArgumentException("Operatore non trovato per email: " + emailOperatore);
+        }
+        if (!(u instanceof Operatore)) {
+            throw new IllegalArgumentException("Utente con email " + emailOperatore + " non è un Operatore.");
+        }
+
+        // Ottiene un riferimento managed all'Operatore nella stessa EntityManager usata per il persist
+        EntityManager em = JpaUtil.getInstance().getEntityManager();
+        try {
+            Operatore managedOperatore = em.find(Operatore.class, u.getIdUtente());
+            if (managedOperatore == null) {
+                // se per qualche motivo non è trovato (improbabile), proviamo getReference
+                managedOperatore = em.getReference(Operatore.class, u.getIdUtente());
+            }
+            movimento.setOperatore(managedOperatore);
+        } finally {
+            em.close();
+        }
+
         // e. Delega al metodo standard di registrazione e restituisce il risultato
         return registraMovimento(movimento);
     }
@@ -171,7 +202,7 @@ public class MovimentoController {
 
         // Se il tipo è "Tutti" o vuoto, passa null al DAO
         String tipo = null;
-        if (tipoMovimento != null && !tipoMovimento.trim().isEmpty() && !tipoMovimento.equals("Tutti")) {
+        if (!tipoMovimento.equals("Tutti")) {
             tipo = tipoMovimento.trim();
         }
 

@@ -2,6 +2,7 @@ package boundary;
 
 import controller.ProdottoController;
 import controller.MovimentoController;
+import controller.LoginController;
 import dto.MovimentoDTO;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ import java.awt.*;
 public class MovimentoForm extends JPanel {
 
     private MovimentoController movCtrl;
+    private LoginController loginCtrl;
     private MainFrame mainFrame;
 
     private JTextField txtCodiceProdotto;
@@ -23,8 +25,9 @@ public class MovimentoForm extends JPanel {
     private JButton btnRegistra;
     private JButton btnTornaDashboard;
 
-    public MovimentoForm(MovimentoController movCtrl, MainFrame mainFrame) {
+    public MovimentoForm(MovimentoController movCtrl, LoginController loginCtrl, MainFrame mainFrame) {
         this.movCtrl = movCtrl;
+        this.loginCtrl = loginCtrl;
         this.mainFrame = mainFrame;
         initComponents();
     }
@@ -118,6 +121,10 @@ public class MovimentoForm extends JPanel {
 
             // Creazione del DTO con i dati della grafica (nessuna dipendenza da Entity)
             MovimentoDTO dto = new MovimentoDTO(codiceProdotto, quantita, tipologia);
+            // Popola l'email dell'operatore corrente in modo che il Controller possa risolvere l'entità
+            if (loginCtrl != null) {
+                dto.setEmailOperatore(loginCtrl.getEmailUtenteCorrente());
+            }
 
             try {
                 // Invio del DTO al Controller, che si occuperà della conversione in Entity

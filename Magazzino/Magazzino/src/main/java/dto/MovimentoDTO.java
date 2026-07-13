@@ -14,6 +14,9 @@ public class MovimentoDTO {
     private String tipologia;
     private java.util.Date data;
 
+    // Email dell'operatore che ha registrato il movimento (popolata dalla Boundary)
+    private String emailOperatore;
+
     public MovimentoDTO() {
     }
 
@@ -78,5 +81,13 @@ public class MovimentoDTO {
 
     public void setData(java.util.Date data) {
         this.data = data;
+    }
+
+    public String getEmailOperatore() {
+        return emailOperatore;
+    }
+
+    public void setEmailOperatore(String emailOperatore) {
+        this.emailOperatore = emailOperatore;
     }
 }

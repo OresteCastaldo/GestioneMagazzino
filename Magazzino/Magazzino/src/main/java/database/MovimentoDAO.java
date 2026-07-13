@@ -26,12 +26,6 @@ public class MovimentoDAO {
         }
     }
 
-    public void eliminaMovimentiPerProdotto(String prodottoId, EntityManager em) {
-        em.createQuery("DELETE FROM Movimento m WHERE m.prodotto.codiceId = :id")
-          .setParameter("id", prodottoId)
-          .executeUpdate();
-    }
-
     /**
      * Ricerca movimenti con filtri opzionali (date e tipo) per un dato prodotto.
      * La query JPQL viene composta dinamicamente in base ai parametri non nulli.
