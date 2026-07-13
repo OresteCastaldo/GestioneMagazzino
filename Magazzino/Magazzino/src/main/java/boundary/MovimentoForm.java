@@ -14,7 +14,6 @@ import java.awt.*;
  */
 public class MovimentoForm extends JPanel {
 
-    private ProdottoController prodCtrl;
     private MovimentoController movCtrl;
     private MainFrame mainFrame;
 
@@ -24,8 +23,7 @@ public class MovimentoForm extends JPanel {
     private JButton btnRegistra;
     private JButton btnTornaDashboard;
 
-    public MovimentoForm(ProdottoController prodCtrl, MovimentoController movCtrl, MainFrame mainFrame) {
-        this.prodCtrl = prodCtrl;
+    public MovimentoForm(MovimentoController movCtrl, MainFrame mainFrame) {
         this.movCtrl = movCtrl;
         this.mainFrame = mainFrame;
         initComponents();

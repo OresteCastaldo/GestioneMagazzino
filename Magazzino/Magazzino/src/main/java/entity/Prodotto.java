@@ -37,11 +37,7 @@ public class Prodotto {
     @Column(name = "sotto_scorta")
     private boolean sottoScorta;
 
-    @OneToMany(mappedBy = "prodotto")
-    private List<Movimento> movimenti;
-
     public Prodotto() {
-        this.movimenti = new ArrayList<>();
     }
 
     //  Get e Set
