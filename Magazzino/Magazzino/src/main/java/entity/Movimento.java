@@ -5,7 +5,7 @@ import java.util.Date;
 
 /**
  * Entità che rappresenta un movimento di carico o scarico di un prodotto.
- * Relazione N a 1 verso Operatore e N a 1 verso Prodotto.
+ * Relazione N a 1 verso Operatore e N a 1 verso   Prodotto.
  */
 @Entity
 @Table(name = "movimento")

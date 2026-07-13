@@ -44,10 +44,12 @@ public class MovimentoController {
         if (prodottoId != null) {
             Prodotto p = prodottoDAO.trovaPerId(prodottoId);
             if (p != null) {
+
                 // Collega la vera entità al movimento
                 movimento.setProdotto(p);
 
                 int nuovaQta;
+
                 if (movimento.getTipologia() != null
                         && movimento.getTipologia().equalsIgnoreCase("CARICO")) {
                     nuovaQta = p.getQuantitaDisponibile() + movimento.getQuantita();
@@ -60,7 +62,7 @@ public class MovimentoController {
                 p.setQuantitaDisponibile(nuovaQta);
                 p.setSottoScorta(p.getQuantitaDisponibile() < p.getSogliaMinDisponibile());
                 prodottoDAO.aggiorna(p);
-                
+
                 // Segnala se il prodotto si trova sotto scorta dopo il movimento (qualsiasi tipo)
                 if (p.isSottoScorta()) {
                     sottoScortaTriggered = true;
@@ -177,7 +179,7 @@ public class MovimentoController {
      * @throws IllegalArgumentException se una data inserita ha un formato non valido
      */
     public List<Movimento> getStoricoConFiltri(String codiceProdotto, java.util.Date dataInizio,
-            java.util.Date dataFine, String tipoMovimento) {
+                                               java.util.Date dataFine, String tipoMovimento) {
 
         if (dataInizio != null) {
             // Forza l'orario alle 00:00:00 per includere l'intero giorno di inizio
@@ -200,11 +202,13 @@ public class MovimentoController {
             dataFine = cal.getTime();
         }
 
+
         // Se il tipo è "Tutti" o vuoto, passa null al DAO
         String tipo = null;
         if (!tipoMovimento.equals("Tutti")) {
             tipo = tipoMovimento.trim();
         }
+
 
         return movimentoDAO.ricercaStoricoConFiltri(codiceProdotto, dataInizio, dataFine, tipo);
     }
@@ -213,14 +217,14 @@ public class MovimentoController {
      * Versione DTO di getStoricoConFiltri per il livello Boundary.
      * La conversione Entity→DTO avviene interamente qui, nel Controller.
      * @param codiceProdotto ID del prodotto (obbligatorio)
-     // @param dataInizioStr data inizio gg/MM/yyyy (opzionale)
-     // @param dataFineStr data fine gg/MM/yyyy (opzionale)
+    // @param dataInizioStr data inizio gg/MM/yyyy (opzionale)
+    // @param dataFineStr data fine gg/MM/yyyy (opzionale)
      * @param tipoMovimento CARICO/SCARICO/Tutti (opzionale)
      * @return la lista di MovimentoDTO che soddisfano i criteri
      * @throws IllegalArgumentException se una data ha formato non valido
      */
     public List<MovimentoDTO> getStoricoConFiltriDTO(String codiceProdotto, java.util.Date dataInizio,
-            java.util.Date dataFine, String tipoMovimento) {
+                                                     java.util.Date dataFine, String tipoMovimento) {
         List<Movimento> entita = getStoricoConFiltri(codiceProdotto, dataInizio, dataFine, tipoMovimento);
         return convertiInDTO(entita);
     }
@@ -235,11 +239,11 @@ public class MovimentoController {
         if (movimenti != null) {
             for (Movimento m : movimenti) {
                 MovimentoDTO dto = new MovimentoDTO(
-                    m.getId(),
-                    m.getProdottoId() != null ? m.getProdottoId() : "N/A",
-                    m.getQuantita(),
-                    m.getTipologia(),
-                    m.getData()
+                        m.getId(),
+                        m.getProdottoId() != null ? m.getProdottoId() : "N/A",
+                        m.getQuantita(),
+                        m.getTipologia(),
+                        m.getData()
                 );
                 dtoList.add(dto);
             }
