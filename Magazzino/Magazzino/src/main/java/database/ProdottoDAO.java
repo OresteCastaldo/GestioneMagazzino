@@ -58,17 +58,6 @@ public class ProdottoDAO {
         }
     }
 
-    public List<Prodotto> ricercaMultiplaFlessibile(String termine) {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            return em.createQuery("SELECT p FROM Prodotto p WHERE p.codiceId = :termine OR p.nome = :termine OR p.scaffale = :termine", Prodotto.class)
-                     .setParameter("termine", termine)
-                     .getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
     public boolean esisteNome(String nome, String codiceEscluso) {
         EntityManager em = JpaUtil.getInstance().getEntityManager();
         try {
@@ -118,12 +107,4 @@ public class ProdottoDAO {
         }
     }
 
-    public List<Prodotto> trovaTutti() {
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            return em.createQuery("SELECT p FROM Prodotto p", Prodotto.class).getResultList();
-        } finally {
-            em.close();
-        }
-    }
 }
