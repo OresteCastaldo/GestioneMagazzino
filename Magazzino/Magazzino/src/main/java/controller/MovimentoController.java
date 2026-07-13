@@ -98,7 +98,7 @@ public class MovimentoController {
         movimento.setProdotto(p);
 
         int nuovaQta;
-        if (movimento.getTipologia() != null && movimento.getTipologia().equalsIgnoreCase("CARICO")) {
+        if (movimento.getTipologia().equalsIgnoreCase("CARICO")) {
             nuovaQta = p.getQuantitaDisponibile() + movimento.getQuantita();
         } else {
             if (movimento.getQuantita() > p.getQuantitaDisponibile()) {
