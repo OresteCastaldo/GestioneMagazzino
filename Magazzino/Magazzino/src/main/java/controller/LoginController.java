@@ -5,7 +5,7 @@ import entity.Responsabile;
 import entity.Utente;
 
 /**
- * Controller dedicato alla gestione dell'autenticazione e della sessione utente.
+ * Controller dedicatO alla gestione dell'autenticazione e della sessione utente.
  * Valida l'accesso verificando email e password.
  */
 public class LoginController {
