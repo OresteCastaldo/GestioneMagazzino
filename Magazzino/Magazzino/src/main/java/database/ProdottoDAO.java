@@ -5,7 +5,7 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 
 /**
- * Classe DAO per la gestione della persistenza dell'entità Prodotto.
+ * Classe DAO per la gestione della persistenza dell'entita Prodotto.
  */
 public class ProdottoDAO {
 
