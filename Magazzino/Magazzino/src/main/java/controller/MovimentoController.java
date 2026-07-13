@@ -37,7 +37,7 @@ public class MovimentoController {
      * Aggiorna automaticamente la quantità disponibile del prodotto associato.
      * @param movimento il movimento da registrare
      */
-    public boolean registraMovimento(Movimento movimento) throws IllegalArgumentException {
+    /*public boolean registraMovimento NON LANCIAVA MAI ECCEZIONE PER PRODOTTO NON TROVATO, TERMINAVA SEMPLICEMENTE(Movimento movimento) throws IllegalArgumentException {
 
         boolean sottoScortaTriggered = false;
         String prodottoId = movimento.getProdottoId();
@@ -72,6 +72,52 @@ public class MovimentoController {
         movimentoDAO.salva(movimento);
         return sottoScortaTriggered;
     }
+*/
+
+
+    /**
+     * Registra un movimento di carico o scarico.
+     * Aggiorna automaticamente la quantità disponibile del prodotto associato.
+     * @param movimento il movimento da registrare
+     */
+    public boolean registraMovimento(Movimento movimento) throws IllegalArgumentException {
+
+        boolean sottoScortaTriggered = false;
+        String prodottoId = movimento.getProdottoId();
+
+        if (prodottoId == null) {
+            throw new IllegalArgumentException("ID Prodotto mancante nel movimento");
+        }
+
+        Prodotto p = prodottoDAO.trovaPerId(prodottoId);
+        if (p == null) {
+            throw new IllegalArgumentException("Prodotto non trovato");
+        }
+
+        //Collega la vera entità al movimento
+        movimento.setProdotto(p);
+
+        int nuovaQta;
+        if (movimento.getTipologia() != null && movimento.getTipologia().equalsIgnoreCase("CARICO")) {
+            nuovaQta = p.getQuantitaDisponibile() + movimento.getQuantita();
+        } else {
+            if (movimento.getQuantita() > p.getQuantitaDisponibile()) {
+                throw new IllegalArgumentException("Quantità insufficiente in magazzino!");
+            }
+            nuovaQta = p.getQuantitaDisponibile() - movimento.getQuantita();
+        }
+        p.setQuantitaDisponibile(nuovaQta);
+        p.setSottoScorta(p.getQuantitaDisponibile() < p.getSogliaMinDisponibile());
+        prodottoDAO.aggiorna(p);
+
+        // Segnala se il prodotto si trova sotto scorta dopo il movimento (qualsiasi tipo)
+        if (p.isSottoScorta()) {
+            sottoScortaTriggered = true;
+        }
+
+        movimentoDAO.salva(movimento);
+        return sottoScortaTriggered;
+    }
 
     /**
      * Registra un movimento a partire da un DTO proveniente dal livello Boundary.
@@ -81,7 +127,7 @@ public class MovimentoController {
      * @return true se il prodotto risulta sotto scorta dopo il movimento
      * @throws IllegalArgumentException se il prodotto non viene trovato o i dati non sono validi
      */
-    public boolean registraMovimentoDaDTO(MovimentoDTO dto) throws IllegalArgumentException {
+    /*public boolean registraMovimentoDaDTO CON CONTROLLI(MovimentoDTO dto) throws IllegalArgumentException {
         // La validazione sintattica del DTO è ora interamente delegata alla Boundary.
         String codice = dto.getCodiceProdotto();
 
@@ -129,6 +175,41 @@ public class MovimentoController {
         }
 
         // e. Delega al metodo standard di registrazione e restituisce il risultato
+        return registraMovimento(movimento);
+    }
+
+    */
+
+
+
+    /**
+     * Registra un movimento a partire da un DTO proveniente dal livello Boundary.
+     * Converte il DTO in un'Entity, risolve il Prodotto associato e delega
+     * la registrazione al metodo standard registraMovimento.
+     * @param dto il MovimentoDTO con i dati provenienti dalla grafica
+     * @return true se il prodotto risulta sotto scorta dopo il movimento
+     * @throws IllegalArgumentException se il prodotto non viene trovato o i dati non sono validi
+     */
+    public boolean registraMovimentoDaDTO(MovimentoDTO dto) throws IllegalArgumentException {
+        // La validazione sintattica del DTO è interamente delegata alla Boundary.
+        String codice = dto.getCodiceProdotto();
+
+        // Crea una nuova istanza dell'Entity Movimento
+        Movimento movimento = new Movimento();
+
+        // Popola l'Entity con i dati del DTO
+        movimento.setQuantita(dto.getQuantita());
+        movimento.setTipologia(dto.getTipologia());
+        movimento.setData(new Date());
+        movimento.setProdottoId(codice);
+
+
+        String emailOperatore = dto.getEmailOperatore();
+        UtenteDAO utenteDAO = new UtenteDAO();
+        Utente u = utenteDAO.trovaPerEmail(emailOperatore);
+        movimento.setOperatore((Operatore) u);
+
+        // Delega al metodo standard di registrazione e restituisce il risultato
         return registraMovimento(movimento);
     }
 
