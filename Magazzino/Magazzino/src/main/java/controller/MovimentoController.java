@@ -37,49 +37,6 @@ public class MovimentoController {
      * Aggiorna automaticamente la quantità disponibile del prodotto associato.
      * @param movimento il movimento da registrare
      */
-    /*public boolean registraMovimento NON LANCIAVA MAI ECCEZIONE PER PRODOTTO NON TROVATO, TERMINAVA SEMPLICEMENTE(Movimento movimento) throws IllegalArgumentException {
-
-        boolean sottoScortaTriggered = false;
-        String prodottoId = movimento.getProdottoId();
-        if (prodottoId != null) {
-            Prodotto p = prodottoDAO.trovaPerId(prodottoId);
-            if (p != null) {
-
-                // Collega la vera entità al movimento
-                movimento.setProdotto(p);
-
-                int nuovaQta;
-
-                if (movimento.getTipologia() != null
-                        && movimento.getTipologia().equalsIgnoreCase("CARICO")) {
-                    nuovaQta = p.getQuantitaDisponibile() + movimento.getQuantita();
-                } else {
-                    if (movimento.getQuantita() > p.getQuantitaDisponibile()) {
-                        throw new IllegalArgumentException("Quantità insufficiente in magazzino!");
-                    }
-                    nuovaQta = p.getQuantitaDisponibile() - movimento.getQuantita();
-                }
-                p.setQuantitaDisponibile(nuovaQta);
-                p.setSottoScorta(p.getQuantitaDisponibile() < p.getSogliaMinDisponibile());
-                prodottoDAO.aggiorna(p);
-
-                // Segnala se il prodotto si trova sotto scorta dopo il movimento (qualsiasi tipo)
-                if (p.isSottoScorta()) {
-                    sottoScortaTriggered = true;
-                }
-            }
-        }
-        movimentoDAO.salva(movimento);
-        return sottoScortaTriggered;
-    }
-*/
-
-
-    /**
-     * Registra un movimento di carico o scarico.
-     * Aggiorna automaticamente la quantità disponibile del prodotto associato.
-     * @param movimento il movimento da registrare
-     */
     public boolean registraMovimento(Movimento movimento) throws IllegalArgumentException {
 
         boolean sottoScortaTriggered = false;
@@ -118,69 +75,6 @@ public class MovimentoController {
         movimentoDAO.salva(movimento);
         return sottoScortaTriggered;
     }
-
-    /**
-     * Registra un movimento a partire da un DTO proveniente dal livello Boundary.
-     * Converte il DTO in un'Entity, risolve il Prodotto associato e delega
-     * la registrazione al metodo standard registraMovimento.
-     * @param dto il MovimentoDTO con i dati provenienti dalla grafica
-     * @return true se il prodotto risulta sotto scorta dopo il movimento
-     * @throws IllegalArgumentException se il prodotto non viene trovato o i dati non sono validi
-     */
-    /*public boolean registraMovimentoDaDTO CON CONTROLLI(MovimentoDTO dto) throws IllegalArgumentException {
-        // La validazione sintattica del DTO è ora interamente delegata alla Boundary.
-        String codice = dto.getCodiceProdotto();
-
-        // b. Verifica l'esistenza del prodotto tramite il codice nel DTO
-        Prodotto prodotto = prodottoDAO.trovaPerId(codice);
-        if (prodotto == null) {
-            throw new IllegalArgumentException("Prodotto non trovato con codice: " + codice);
-        }
-
-        // c. Crea una nuova istanza dell'Entity Movimento
-        Movimento movimento = new Movimento();
-
-        // d. Popola l'Entity con i dati del DTO
-        movimento.setQuantita(dto.getQuantita());
-        movimento.setTipologia(dto.getTipologia());
-        movimento.setData(new Date());
-        movimento.setProdottoId(prodotto.getCodiceId());
-
-        // f. Risolve obbligatoriamente l'operatore corrente (l'applicazione richiede che un Operatore registri il movimento)
-        String emailOperatore = dto.getEmailOperatore();
-        if (emailOperatore == null || emailOperatore.trim().isEmpty()) {
-            throw new IllegalArgumentException("Operatore non autenticato: email mancante.");
-        }
-
-        UtenteDAO utenteDAO = new UtenteDAO();
-        Utente u = utenteDAO.trovaPerEmail(emailOperatore);
-        if (u == null) {
-            throw new IllegalArgumentException("Operatore non trovato per email: " + emailOperatore);
-        }
-        if (!(u instanceof Operatore)) {
-            throw new IllegalArgumentException("Utente con email " + emailOperatore + " non è un Operatore.");
-        }
-
-        // Ottiene un riferimento managed all'Operatore nella stessa EntityManager usata per il persist
-        EntityManager em = JpaUtil.getInstance().getEntityManager();
-        try {
-            Operatore managedOperatore = em.find(Operatore.class, u.getIdUtente());
-            if (managedOperatore == null) {
-                // se per qualche motivo non è trovato (improbabile), proviamo getReference
-                managedOperatore = em.getReference(Operatore.class, u.getIdUtente());
-            }
-            movimento.setOperatore(managedOperatore);
-        } finally {
-            em.close();
-        }
-
-        // e. Delega al metodo standard di registrazione e restituisce il risultato
-        return registraMovimento(movimento);
-    }
-
-    */
-
-
 
     /**
      * Registra un movimento a partire da un DTO proveniente dal livello Boundary.
@@ -261,6 +155,7 @@ public class MovimentoController {
      */
     public List<Movimento> getStoricoConFiltri(String codiceProdotto, java.util.Date dataInizio,
                                                java.util.Date dataFine, String tipoMovimento) {
+
 
         if (dataInizio != null) {
             // Forza l'orario alle 00:00:00 per includere l'intero giorno di inizio
