@@ -321,7 +321,7 @@ public class MovimentoController {
             for (Movimento m : movimenti) {
                 MovimentoDTO dto = new MovimentoDTO(
                         m.getId(),
-                        m.getProdottoId() != null ? m.getProdottoId() : "N/A",
+                        m.getProdottoId(),
                         m.getQuantita(),
                         m.getTipologia(),
                         m.getData()

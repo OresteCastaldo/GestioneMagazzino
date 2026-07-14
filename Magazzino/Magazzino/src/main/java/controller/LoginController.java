@@ -50,4 +50,13 @@ public class LoginController {
         if (utenteCorrente == null) return null;
         return utenteCorrente.getEmail();
     }
+
+    /**
+     * Metodo di utilità per i test. Permette di impostare l'utente corrente
+     * senza dipendere dal database, aggirando la necessità di reflection.
+     * @param u l'utente da impostare come utente corrente
+     */
+    public void setUtenteCorrenteForTest(Utente u) {
+        this.utenteCorrente = u;
+    }
 }
