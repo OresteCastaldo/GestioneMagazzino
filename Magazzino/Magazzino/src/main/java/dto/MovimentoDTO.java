@@ -41,7 +41,7 @@ public class MovimentoDTO {
         this.data = data;
     }
 
-    // --- Getters e Setters ---
+    // Get e Set
 
     public Long getId() {
         return id;

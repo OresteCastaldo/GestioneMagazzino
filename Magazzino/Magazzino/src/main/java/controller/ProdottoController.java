@@ -23,8 +23,8 @@ public class ProdottoController {
 
     /**
      * Ricerca flessibile per ID, nome o scaffale (restituisce il primo risultato).
-     * @param termine il termine di ricerca
-     * @return il primo prodotto trovato, o null
+     * "termine" il termine di ricerca
+     * ritorna il primo prodotto trovato, o null
      */
     public Prodotto cercaProdottoFlessibile(String termine) {
         return prodottoDAO.ricercaFlessibile(termine);
@@ -33,8 +33,8 @@ public class ProdottoController {
     /**
      * Ricerca flessibile per ID, nome o scaffale e restituisce un DTO
      * privo di dipendenze dal livello Entity. Usato dal livello Boundary.
-     * @param termine il termine di ricerca
-     * @return il ProdottoDTO con tutti i dati per la GUI, o null se non trovato
+     * "termine" il termine di ricerca
+     * ritorna il ProdottoDTO con tutti i dati per la GUI, o null se non trovato
      */
     public ProdottoDTO cercaProdottoFlessibileDTO(String termine) {
         Prodotto p = cercaProdottoFlessibile(termine);
@@ -55,7 +55,7 @@ public class ProdottoController {
 
     /**
      * Inserisce un nuovo prodotto nel catalogo.
-     * @param prodotto il prodotto da inserire
+     * "prodotto" il prodotto da inserire
      */
     public void inserisciProdotto(Prodotto prodotto) {
         prodotto.setSottoScorta(prodotto.getQuantitaDisponibile() < prodotto.getSogliaMinDisponibile());
@@ -65,7 +65,7 @@ public class ProdottoController {
     /**
      * Valida le regole di business del prodotto prima dell'inserimento o della modifica.
      * Presume che i dati siano già sintatticamente corretti (validazione Boundary).
-     * @return null se tutti i controlli passano, altrimenti il messaggio di errore
+     * ritorna null se tutti i controlli passano, altrimenti il messaggio di errore
      */
     public String validaRegoleBusinessProdotto(ProdottoDTO dto, boolean isInserimento) {
         String codiceId = dto.getCodiceId();
@@ -109,8 +109,8 @@ public class ProdottoController {
     /**
      * Salva le modifiche a un prodotto esistente a partire da un DTO proveniente dal livello Boundary.
      * Converte il DTO in un'Entity e delega il salvataggio al metodo standard.
-     * @param dto il ProdottoDTO con i dati aggiornati dalla grafica
-     * @return true se il prodotto risulta sotto scorta dopo il salvataggio
+     * "dto" il ProdottoDTO con i dati aggiornati dalla grafica
+     * ritorna true se il prodotto risulta sotto scorta dopo il salvataggio
      */
     public boolean salvaModificheDaDTO(ProdottoDTO dto) {
         Prodotto p = mappaDTOaEntity(dto);
@@ -120,8 +120,8 @@ public class ProdottoController {
 
     /**
      * Metodo interno per convertire un ProdottoDTO in un'Entity Prodotto.
-     * @param dto il DTO da convertire
-     * @return l'Entity Prodotto popolata con i dati del DTO
+     * "dto" il DTO da convertire
+     * ritorna l'Entity Prodotto popolata con i dati del DTO
      */
     private Prodotto mappaDTOaEntity(ProdottoDTO dto) {
         Prodotto p = new Prodotto();
@@ -137,13 +137,11 @@ public class ProdottoController {
 
     /**
      * Elimina un prodotto e i movimenti correlati.
-     * @param codiceId il codice del prodotto da eliminare
+     * "codiceId" il codice del prodotto da eliminare
      */
     public void eliminaProdotto(String codiceId) {
         prodottoDAO.elimina(codiceId);
     }
 
 
-
-    // Metodo generaIdUnivoco rimosso in quanto l'ID deve essere inserito manualmente
 }

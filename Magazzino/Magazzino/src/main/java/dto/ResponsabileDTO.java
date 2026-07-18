@@ -1,7 +1,7 @@
 package dto;
 
 /**
- * Data Transfer Object per il trasporto dei dati anagrafici di un Responsabile
+ * DTO per il trasporto dei dati anagrafici di un Responsabile
  * dal livello Controller al livello Boundary.
  * Non contiene alcuna dipendenza dal livello Entity o Database.
  */

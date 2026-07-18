@@ -1,7 +1,7 @@
 package dto;
 
 /**
- * Data Transfer Object per il trasporto dei dati di un Prodotto
+ * DTO per il trasporto dei dati di un Prodotto
  * tra il livello Controller e il livello Boundary.
  * Non contiene alcuna dipendenza dal livello Entity o Database.
  */
@@ -31,7 +31,7 @@ public class ProdottoDTO {
         this.sottoScorta = sottoScorta;
     }
 
-    // --- Getters e Setters ---
+    // Get e Set
 
     public String getCodiceId() {
         return codiceId;

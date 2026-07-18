@@ -81,6 +81,7 @@ public class JpaUtil {
      * Questo metodo va chiamato alla fine dell'applicazione,
      * quando non sono più necessarie operazioni di persistenza.
      */
+
     public void chiudi() {
         emf.close();
     }

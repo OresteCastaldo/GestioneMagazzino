@@ -1,7 +1,7 @@
 package dto;
 
 /**
- * Data Transfer Object per il trasporto dei dati anagrafici di un Operatore
+ * DTO per il trasporto dei dati anagrafici di un Operatore
  * dal livello Controller al livello Boundary.
  * Non contiene alcuna dipendenza dal livello Entity o Database.
  */
@@ -17,7 +17,7 @@ public class OperatoreDTO {
     public OperatoreDTO() {
     }
 
-    // --- Getters e Setters ---
+    //  Get e Set
 
     public Long getIdUtente() {
         return idUtente;

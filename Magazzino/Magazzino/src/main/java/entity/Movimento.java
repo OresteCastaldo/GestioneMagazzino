@@ -41,7 +41,7 @@ public class Movimento {
     public Movimento() {
     }
 
-    //  Get e Sett
+    //  Get e Set
 
     public Long getId() {
         return id;
@@ -91,7 +91,7 @@ public class Movimento {
         this.operatore = operatore;
     }
 
-    // --- Metodi di retrocompatibilità per il layer Boundary ---
+
 
     public String getProdottoId() {
         if (this.prodotto != null) {

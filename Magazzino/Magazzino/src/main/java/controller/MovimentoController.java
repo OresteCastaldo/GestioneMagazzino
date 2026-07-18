@@ -18,7 +18,6 @@ import java.util.List;
  * Controller dedicato alla gestione dei movimenti di magazzino.
  * Ispirato alla struttura di IDS_Magazzino.MovimentoController,
  * adattato allo stack Hibernate/JPA del progetto.
- *
  * Coordina le operazioni di carico e scarico, aggiornando
  * automaticamente le quantità dei prodotti coinvolti.
  */
@@ -35,7 +34,7 @@ public class MovimentoController {
     /**
      * Registra un movimento di carico o scarico.
      * Aggiorna automaticamente la quantità disponibile del prodotto associato.
-     * @param movimento il movimento da registrare
+     * "movimento" il movimento da registrare
      */
     public boolean registraMovimento(Movimento movimento) throws IllegalArgumentException {
 
@@ -80,9 +79,9 @@ public class MovimentoController {
      * Registra un movimento a partire da un DTO proveniente dal livello Boundary.
      * Converte il DTO in un'Entity, risolve il Prodotto associato e delega
      * la registrazione al metodo standard registraMovimento.
-     * @param dto il MovimentoDTO con i dati provenienti dalla grafica
-     * @return true se il prodotto risulta sotto scorta dopo il movimento
-     * @throws IllegalArgumentException se il prodotto non viene trovato o i dati non sono validi
+     * "dto" il MovimentoDTO con i dati provenienti dalla grafica
+     * ritorna true se il prodotto risulta sotto scorta dopo il movimento
+     * lancia Eccezione se il prodotto non viene trovato o i dati non sono validi
      */
     public boolean registraMovimentoDaDTO(MovimentoDTO dto) throws IllegalArgumentException {
         // La validazione sintattica del DTO è interamente delegata alla Boundary.

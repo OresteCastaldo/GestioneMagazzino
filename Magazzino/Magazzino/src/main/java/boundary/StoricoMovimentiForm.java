@@ -42,12 +42,12 @@ public class StoricoMovimentiForm extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Titolo
+        // titolo
         JLabel lblTitolo = new JLabel("Storico Movimenti", SwingConstants.CENTER);
         lblTitolo.setFont(new Font("Arial", Font.BOLD, 18));
         lblTitolo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // 2. Ristrutturazione del Pannello Ricerca Principale
+        // ristrutturazione del pannello ricerca rrincipale
         JPanel panelRicerca = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel lblFiltro = new JLabel("Cerca prodotto per ID, Nome o Scaffale:");
         txtFiltroProdotto = new JTextField(15);
@@ -56,14 +56,14 @@ public class StoricoMovimentiForm extends JPanel {
         panelRicerca.add(txtFiltroProdotto);
         panelRicerca.add(btnFiltra);
 
-        // 3. Ristrutturazione del Pannello "Filtri Opzionali"
+        // ristrutturazione del pannello "Filtri Opzionali"
         JPanel panelFiltriAvanzati = new JPanel(new GridBagLayout());
         panelFiltriAvanzati.setBorder(BorderFactory.createTitledBorder("Filtri Opzionali"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Riga 0
+        // riga 0
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
         panelFiltriAvanzati.add(new JLabel("Data Inizio (gg/MM/aaaa):"), gbc);
         
@@ -78,7 +78,7 @@ public class StoricoMovimentiForm extends JPanel {
         txtDataFine = new JTextField(10);
         panelFiltriAvanzati.add(txtDataFine, gbc);
 
-        // Riga 1
+        // riga 1
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
         panelFiltriAvanzati.add(new JLabel("Tipo:"), gbc);
         
@@ -94,10 +94,10 @@ public class StoricoMovimentiForm extends JPanel {
         btnResettaFiltri = new JButton("Resetta Filtri");
         panelFiltriAvanzati.add(btnResettaFiltri, gbc);
 
-        // Disabilita i filtri avanzati finché non si cerca un prodotto
+        // disabilita i filtri avanzati fino a quando non si cerca un prodotto
         abilitaFiltriAvanzati(false);
 
-        // 1. Ristrutturazione del Layout Superiore (panelTop)
+        // ristrutturazione del Layout superiore
         JPanel panelTop = new JPanel();
         panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
         panelTop.add(lblTitolo);
@@ -106,7 +106,7 @@ public class StoricoMovimentiForm extends JPanel {
         panelTop.add(panelFiltriAvanzati);
         add(panelTop, BorderLayout.NORTH);
 
-        // 4. Mantenimento del resto della UI
+        // mantenimento del resto della UI
         // Tabella
         String[] colonne = {"ID", "Prodotto", "Quantità", "Tipologia", "Data"};
         tableModel = new DefaultTableModel(colonne, 0) {
@@ -119,13 +119,13 @@ public class StoricoMovimentiForm extends JPanel {
         JScrollPane scrollPane = new JScrollPane(tabellaMovimenti);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Pulsante torna
+        // pulsante torna
         btnTornaDashboard = new JButton("Torna alla Dashboard");
         JPanel panelBottom = new JPanel(new FlowLayout());
         panelBottom.add(btnTornaDashboard);
         add(panelBottom, BorderLayout.SOUTH);
 
-        // Action Listeners
+        // Action listener
         btnFiltra.addActionListener(e -> filtraMovimenti());
         btnApplicaFiltri.addActionListener(e -> applicaFiltriAvanzati());
         btnResettaFiltri.addActionListener(e -> resettaFiltri());

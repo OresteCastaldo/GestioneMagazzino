@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
@@ -22,16 +21,16 @@
                       value="com.mysql.cj.jdbc.Driver"/>
 
             <property name="jakarta.persistence.jdbc.url"
-                      value="jdbc:mysql://127.0.0.1:3306/magazzino_db"/>
+                      value="jdbc:mysql://127.0.0.1:3306/magazzino_db?createDatabaseIfNotExist=true"/>
 
             <property name="jakarta.persistence.jdbc.user"
-                      value="admin"/>
-<!--RICORDA UTENTE CAMBIATO DA admin a root-->
+                      value="INSERIRE_UTENTE"/>
+
             <property name="jakarta.persistence.jdbc.password"
-                      value="dueuno21"/>
+                      value="INSERIRE_PASSWORD"/>
 
             <property name="hibernate.hbm2ddl.auto"
-                      value="update"/>
+                      value="create"/>
 
             <property name="hibernate.show_sql"
                       value="true"/>

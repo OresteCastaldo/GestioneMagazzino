@@ -24,9 +24,9 @@ public class RegistrationController {
     /**
      * Registra un nuovo operatore a partire dal suo DTO.
      * Mappa i dati sull'entità concreta e delega il salvataggio.
-     * @param dto i dati dell'operatore provenienti dalla GUI
-     * @return true se la registrazione ha successo
-     * @throws Exception in caso di validazione fallita
+     * parametro dto i dati dell'operatore provenienti dalla GUI
+     * return true se la registrazione ha successo
+     * lancia Eccezione in caso di validazione fallita
      */
     public boolean registraNuovoOperatore(OperatoreDTO dto) throws Exception {
         Operatore op = new Operatore();
@@ -41,9 +41,9 @@ public class RegistrationController {
     /**
      * Registra un nuovo responsabile a partire dal suo DTO.
      * Mappa i dati sull'entità concreta e delega il salvataggio.
-     * @param dto i dati del responsabile provenienti dalla GUI
-     * @return true se la registrazione ha successo
-     * @throws Exception in caso di validazione fallita
+     * parametro dto i dati del responsabile provenienti dalla GUI
+     * retrurn true se la registrazione ha successo
+     * Lancia Eccezione in caso di validazione fallita
      */
     public boolean registraNuovoResponsabile(ResponsabileDTO dto) throws Exception {
         Responsabile resp = new Responsabile();
@@ -58,9 +58,9 @@ public class RegistrationController {
     /**
      * Valida i dati e registra un nuovo utente nel sistema tramite Hibernate.
      * Reso privato per nascondere le entità al livello Boundary.
-     * @param utente l'utente da registrare (Operatore o Responsabile)
-     * @return true se la registrazione è andata a buon fine
-     * @throws Exception se la validazione fallisce o l'utente risulta già registrato
+     * parametro utente l'utente da registrare (Operatore o Responsabile)
+     * return true se la registrazione è andata a buon fine
+     * Lancia Eccezione se la validazione fallisce o l'utente risulta già registrato
      */
     private boolean registraNuovoUtente(Utente utente) throws Exception {
         // Verifica email duplicata

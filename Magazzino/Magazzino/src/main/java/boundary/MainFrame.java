@@ -10,7 +10,6 @@ import java.awt.*;
 
 /**
  * Interfaccia principale (Boundary) per il sistema di Gestione Magazzino.
- * Utilizza un CardLayout per navigare tra i diversi form.
  * Istanzia i Controller dedicati e li distribuisce alle Boundary.
  */
 public class MainFrame extends JFrame {
@@ -106,7 +105,7 @@ public class MainFrame extends JFrame {
 
     /**
      * Naviga verso la schermata specificata.
-     * @param nomeSchermata il nome della card da mostrare
+     * nomeSchermata il nome della card da mostrare
      */
     public void mostraSchermata(String nomeSchermata) {
         if (!nomeSchermata.equals("login") && !nomeSchermata.equals("registrazione")) {

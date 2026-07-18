@@ -216,7 +216,7 @@ public class ProdottoForm extends JPanel {
             return;
         }
         
-        // Uso la ricerca flessibile tramite DTO (nessuna dipendenza da Entity)
+        // Uso la ricerca flessibile tramite DTO
         ProdottoDTO p = prodCtrl.cercaProdottoFlessibileDTO(termine);
         if (p != null) {
             txtCodiceId.setText(p.getCodiceId());

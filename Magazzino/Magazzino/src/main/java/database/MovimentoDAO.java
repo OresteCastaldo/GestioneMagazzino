@@ -29,11 +29,11 @@ public class MovimentoDAO {
     /**
      * Ricerca movimenti con filtri opzionali (date e tipo) per un dato prodotto.
      * La query JPQL viene composta dinamicamente in base ai parametri non nulli.
-     * @param codiceProdotto ID del prodotto (obbligatorio)
-     * @param dataInizio data di inizio periodo (opzionale)
-     * @param dataFine data di fine periodo (opzionale)
-     * @param tipoMovimento tipo CARICO/SCARICO (opzionale, null o vuoto = tutti)
-     * @return lista dei movimenti che soddisfano i criteri
+     * codiceProdotto ID del prodotto (obbligatorio)
+     *  dataInizio data di inizio periodo (opzionale)
+     *  dataFine data di fine periodo (opzionale)
+     *  tipoMovimento tipo CARICO/SCARICO (opzionale, null o vuoto = tutti)
+     * ritorna la lista dei movimenti che soddisfano i criteri
      */
     public List<Movimento> ricercaStoricoConFiltri(String codiceProdotto, Date dataInizio, Date dataFine, String tipoMovimento) {
         EntityManager em = JpaUtil.getInstance().getEntityManager();

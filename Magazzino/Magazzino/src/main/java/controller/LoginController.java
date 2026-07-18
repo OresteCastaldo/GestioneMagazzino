@@ -19,9 +19,9 @@ public class LoginController {
 
     /**
      * Effettua il login verificando email e password tramite UtenteDAO (Hibernate).
-     * @param email l'email dell'utente
-     * @param password la password dell'utente
-     * @return true se l'utente è stato trovato e la password corrisponde
+     * email l'email dell'utente
+     * password la password dell'utente
+     * return true se l'utente è stato trovato e la password corrisponde
      */
     public boolean effettuaLogin(String email, String password) {
         Utente u = utenteDAO.trovaPerEmailEPassword(email.trim(), password.trim());
@@ -54,7 +54,7 @@ public class LoginController {
     /**
      * Metodo di utilità per i test. Permette di impostare l'utente corrente
      * senza dipendere dal database, aggirando la necessità di reflection.
-     * @param u l'utente da impostare come utente corrente
+     * "u" l'utente da impostare come utente corrente
      */
     public void setUtenteCorrenteForTest(Utente u) {
         this.utenteCorrente = u;

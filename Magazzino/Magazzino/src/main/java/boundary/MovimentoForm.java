@@ -38,7 +38,7 @@ public class MovimentoForm extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Titolo
+        // titolo
         JLabel lblTitolo = new JLabel("Registra Movimento", SwingConstants.CENTER);
         lblTitolo.setFont(new Font("Arial", Font.BOLD, 18));
         gbc.gridx = 0;
@@ -48,7 +48,7 @@ public class MovimentoForm extends JPanel {
 
         gbc.gridwidth = 1;
 
-        // Codice Prodotto
+        // codice  prodotto
         JLabel lblCodice = new JLabel("Codice Prodotto:");
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -59,7 +59,7 @@ public class MovimentoForm extends JPanel {
         gbc.gridy = 1;
         add(txtCodiceProdotto, gbc);
 
-        // Quantità
+        // Quantita
         JLabel lblQuantita = new JLabel("Quantità:");
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -92,7 +92,7 @@ public class MovimentoForm extends JPanel {
         gbc.gridy = 5;
         add(btnTornaDashboard, gbc);
 
-        // Action Listeners
+        // Action listener
         btnRegistra.addActionListener(e -> registraMovimento());
         btnTornaDashboard.addActionListener(e -> mainFrame.mostraSchermata("dashboard"));
     }
@@ -119,8 +119,10 @@ public class MovimentoForm extends JPanel {
                 return;
             }
 
-            // Creazione del DTO con i dati della grafica (nessuna dipendenza da Entity)
+            // Creazione del DTO con i dati della grafica
+
             MovimentoDTO dto = new MovimentoDTO(codiceProdotto, quantita, tipologia);
+
             // Popola l'email dell'operatore corrente in modo che il Controller possa risolvere l'entità
             if (loginCtrl != null) {
                 dto.setEmailOperatore(loginCtrl.getEmailUtenteCorrente());
@@ -128,6 +130,7 @@ public class MovimentoForm extends JPanel {
 
             try {
                 // Invio del DTO al Controller, che si occuperà della conversione in Entity
+
                 boolean sottoScorta = movCtrl.registraMovimentoDaDTO(dto);
                 JOptionPane.showMessageDialog(this, "Movimento registrato con successo!", "Successo", JOptionPane.INFORMATION_MESSAGE);
 

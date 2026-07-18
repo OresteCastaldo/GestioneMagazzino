@@ -89,7 +89,7 @@ public class ProdottoDAO {
         try {
             em.getTransaction().begin();
 
-            // 1. Elimina il prodotto
+            // elimina il prodotto
             Prodotto prodotto = em.find(Prodotto.class, codiceId);
             if (prodotto != null) {
                 em.remove(prodotto);

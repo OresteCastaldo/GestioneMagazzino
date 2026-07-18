@@ -27,8 +27,8 @@ public class UtenteDAO {
 
     /**
      * Cerca un utente per email (usato per verificare duplicati in fase di registrazione).
-     * @param email l'email da cercare
-     * @return l'utente trovato, o null se non esiste
+     *  email l'email da cercare
+     * ritorna  l'utente trovato, o null se non esiste
      */
     public Utente trovaPerEmail(String email) {
         EntityManager em = JpaUtil.getInstance().getEntityManager();
@@ -45,9 +45,9 @@ public class UtenteDAO {
 
     /**
      * Cerca un utente per email e password (usato per l'autenticazione in fase di login).
-     * @param email l'email dell'utente
-     * @param password la password dell'utente
-     * @return l'utente trovato se le credenziali corrispondono, null altrimenti
+     * email l'email dell'utente
+     *  password la password dell'utente
+     * ritorna l'utente trovato se le credenziali corrispondono, null altrimenti
      */
     public Utente trovaPerEmailEPassword(String email, String password) {
         EntityManager em = JpaUtil.getInstance().getEntityManager();

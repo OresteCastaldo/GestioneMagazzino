@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * Form Boundary che funge da sottomenu per la Gestione dei Prodotti.
  * Accessibile solo al Responsabile.
- * Non necessita di alcun Controller — naviga solo tra schermate.
+ * Non necessita di alcun Controller, naviga solo tra schermate.
  */
 public class GestioneProdottoMenu extends JPanel {
 
